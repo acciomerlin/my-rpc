@@ -20,7 +20,12 @@ class MyRegistryService(RegistryService):
         if instance in self.proto2instances[proto]:
             print(f"==> already exists instance: {instance}")
             instance.set_status(True)
+            # 更新时间戳
+            old_time = self.ins2timestamp[instance]
+            print(f"该实例上一次注册的时间：{datetime.fromtimestamp(old_time).strftime('%Y-%m-%d %H:%M:%S')}")
             self.ins2timestamp[instance] = int(time.time())
+            new_time = self.ins2timestamp[instance]
+            print(f"该实例本次时间戳更新的时间：{datetime.fromtimestamp(new_time).strftime('%Y-%m-%d %H:%M:%S')}")
             return instance
         print(f"==> register instance: {instance}")
         instance.set_status(True)  # 实例状态置为已注册

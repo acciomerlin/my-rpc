@@ -3,6 +3,7 @@ import http.client
 import json
 import socket
 import threading
+import time
 
 from registry.beans.instance_meta import InstanceMeta
 
@@ -144,6 +145,11 @@ class RegistryClient(object):
 
         conn.close()
 
+    def register_send_heartbeat(self):
+        while True:
+            time.sleep(9)
+            self.register_to_registry()
+
 
 class RPCServer(TCPServer, JSONRPC, ServerStub, RegistryClient):
     def __init__(self):
@@ -152,30 +158,17 @@ class RPCServer(TCPServer, JSONRPC, ServerStub, RegistryClient):
         ServerStub.__init__(self)
         RegistryClient.__init__(self)
         self.running = True
-        threading.Thread(target=self.listen_stop).start()
 
     def serve(self, host, port):
         # 循环监听端口
         self.bind_listen(host, port)
         print(f"SERVER {host} LISTEN {port}")
 
-        # 向注册中心暴露服务接口
-        self.register_to_registry()
+        # 向注册中心注册服务并定期发送心跳
+        threading.Thread(target=self.register_send_heartbeat()).start()
 
-        try:
-            while True:
-                self.accept_receive_close()
-        finally:
-            print(1)
-            self.running = False
-
-    def listen_stop(self):
-        """stop server"""
         while True:
-            if not self.running:
-                print('hi')
-                self.unregister_from_registry()
-                self.sock.close()
+            self.accept_receive_close()
 
     def _process(self, msg):
         return self.call_method(msg)
