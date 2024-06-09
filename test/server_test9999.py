@@ -14,7 +14,8 @@ def hi(user):
     return f"hi {user}, welcome"
 
 
-s = rpc.RPCServer()
-s.register_services(add)
-s.register_services(hi)
-s.serve('127.0.0.1', 9999)
+if __name__ == '__main__':
+    s = rpc.RPCServer()
+    s.register_services(add)
+    s.register_services(hi)
+    s.serve('127.0.0.1', 9999)

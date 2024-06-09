@@ -1,10 +1,17 @@
+import configparser
+import http.client
 import json
 import socket
 import threading
 
+from registry.beans.instance_meta import InstanceMeta
+
 
 class TCPServer(object):
     def __init__(self):
+        # bind and listen端口
+        self.port = None
+        self.host = None
         # 创建socket工具对象
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -12,6 +19,8 @@ class TCPServer(object):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def bind_listen(self, host, port):
+        self.host = host
+        self.port = port
         self.sock.bind((host, port))  # 0.0.0.0 本机的所有可用的网络接口
         self.sock.listen(5)  # 参数 5 表示在拒绝连接之前，操作系统可以挂起的最大连接数（称为 "backlog"）。如果有超过 5 个连接等待处理，新连接将会被拒绝。
 
@@ -32,6 +41,7 @@ class TCPServer(object):
     def accept_receive_close(self):
         """建立与client的连接，处理请求，多线程"""
         try:
+            self.sock.settimeout(3)
             client_sock, client_addr = self.sock.accept()
             print(f'与客户端{str(client_addr)}建立了连接')
 
@@ -39,6 +49,8 @@ class TCPServer(object):
             t = threading.Thread(target=self.handle, args=(client_sock, client_addr))
             # 启动子线程，主线程继续循环接收另一个客户端连接的请求
             t.start()
+        except socket.timeout as e:
+            print(f"{e}")
         except socket.error as e:
             print(f"Error accepting connection: {e}")
 
@@ -82,18 +94,88 @@ class ServerStub(object):
         self.services[name] = method
 
 
-class RPCServer(TCPServer, JSONRPC, ServerStub):
+class RegistryClient(object):
+    def __init__(self):
+        # 读取配置文件
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+
+        registry_host = config['registry']['host']
+        registry_port = int(config['registry']['port'])
+        self.registry_host = registry_host
+        self.registry_port = registry_port
+        self.servers_cache = []
+        print(registry_host, " ", registry_port)  # test
+
+    def register_to_registry(self):
+        conn = http.client.HTTPConnection("localhost", 8081)
+        headers = {'Content-type': 'application/json'}
+
+        instance = InstanceMeta("json", self.host, self.port)
+
+        # 例子，还可加各种备注
+        instance.add_parameters({'ip_proto': 'ipv4'})
+        instance_data = json.dumps(instance.to_dict())
+
+        conn.request("POST", "/myRegistry/register?proto=json", instance_data, headers)
+        response = conn.getresponse()
+        if response.status == 200:
+            response_data = json.loads(response.read().decode())
+            print(f"SUCCESSFULLY REGISTER TO THE REGISTRY: \n{response_data}\n===================")
+        else:
+            print(f"FAIL TO REGISTER TO THE REGISTRY: \n{response.read().decode()}\n=================")
+
+        conn.close()
+
+    def unregister_from_registry(self):
+        conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
+        headers = {'Content-type': 'application/json'}
+
+        instance = InstanceMeta("json", self.host, self.port)
+        instance_data = json.dumps(instance.to_dict())
+
+        conn.request("POST", "/myRegistry/unregister?proto=json", instance_data, headers)
+        response = conn.getresponse()
+        if response.status == 200:
+            response_data = json.loads(response.read().decode())
+            print(f"SUCCESSFULLY UNREGISTERED FROM THE REGISTRY: \n{response_data}\n===================")
+        else:
+            print(f"FAILED TO UNREGISTER FROM THE REGISTRY: \n{response.read().decode()}\n=================")
+
+        conn.close()
+
+
+class RPCServer(TCPServer, JSONRPC, ServerStub, RegistryClient):
     def __init__(self):
         TCPServer.__init__(self)
         JSONRPC.__init__(self)
         ServerStub.__init__(self)
+        RegistryClient.__init__(self)
+        self.running = True
+        threading.Thread(target=self.listen_stop).start()
 
     def serve(self, host, port):
         # 循环监听端口
         self.bind_listen(host, port)
         print(f"SERVER {host} LISTEN {port}")
+
+        # 向注册中心暴露服务接口
+        self.register_to_registry()
+
+        try:
+            while True:
+                self.accept_receive_close()
+        finally:
+            print(1)
+            self.running = False
+
+    def listen_stop(self):
+        """stop server"""
         while True:
-            self.accept_receive_close()
+            if not self.running:
+                print('hi')
+                self.unregister_from_registry()
+                self.sock.close()
 
     def _process(self, msg):
         return self.call_method(msg)
