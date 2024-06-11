@@ -1,4 +1,6 @@
 from http.server import HTTPServer
+import socket
+
 from registry.api.my_registry_service_controller import RequestHandler
 
 
@@ -11,7 +13,11 @@ def run(server_class=HTTPServer, handler_class=RequestHandler, port=8081):
     """
     server_address = ('', port)  # 监听来自所有网络接口的请求
     httpd = server_class(server_address, handler_class)
-    print(f'Starting httpd server on port {port}')
+
+    # 获取服务器IP地址
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+    print(f'Starting httpd server on {ip_address} port {port}')
     httpd.serve_forever()
 
 

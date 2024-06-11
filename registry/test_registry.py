@@ -6,7 +6,7 @@ import http.client
 from time import sleep
 
 from registry.beans.instance_meta import InstanceMeta
-from app import run
+from registry.app import run
 
 
 class Test(unittest.TestCase):

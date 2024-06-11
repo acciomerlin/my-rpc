@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  registry:
+    build: ./registry
+    working_dir: /app/registry
+    volumes:
+      - .:/app
+    networks:
+      - rpc_network
+    command: python app.py
+
+  server1:
+    build: ./server
+    working_dir: /app/server
+    volumes:
+      - .:/app
+    environment:
+      - REGISTRY_HOST=registry
+      - REGISTRY_PORT=8081
+    networks:
+      - rpc_network
+    depends_on:
+      - registry
+    command: python server.py
+
+  server2:
+    build: ./server
+    environment:
+      - REGISTRY_HOST=registry
+      - REGISTRY_PORT=8081
+      - PYTHONPATH=/app
+    networks:
+      - rpc_network
+    depends_on:
+      - registry
+    entrypoint: ["sh", "-c", "python3 server.py"]
+
+  client:
+    build: ./client
+    environment:
+      - REGISTRY_HOST=registry
+      - REGISTRY_PORT=8081
+      - PYTHONPATH=/app
+    networks:
+      - rpc_network
+    depends_on:
+      - server1
+      - server2
+
+networks:
+  rpc_network:
