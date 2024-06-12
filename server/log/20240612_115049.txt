@@ -1,0 +1,278 @@
+[INFO]2024-06-12 11:50:49 - 读取注册中心配置：Registry IP&PORT: 172.27.14.0:9999
+[INFO]2024-06-12 11:50:49 - 注册方法：add
+[INFO]2024-06-12 11:50:49 - 注册方法：hi
+[INFO]2024-06-12 11:50:49 - From 0.0.0.0:8887 start listening...
+[INFO]2024-06-12 11:50:58 - SUCCESSFULLY REGISTER TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:51:07 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:51:16 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:51:25 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:51:34 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:51:43 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:51:52 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:52:01 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:52:10 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:52:19 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:52:28 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:52:37 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:52:46 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:52:55 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:53:04 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:53:13 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:53:22 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:53:31 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:53:40 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:53:49 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:53:58 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:54:07 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:54:16 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:54:25 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:54:34 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:54:43 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:54:52 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:55:01 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:55:10 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:55:19 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:55:28 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:55:37 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:55:46 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:55:55 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:56:04 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:56:13 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:56:22 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:56:31 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:56:40 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:56:49 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:56:58 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:57:07 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:57:16 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:57:25 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:57:34 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:57:43 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:57:52 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:58:01 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:58:10 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:58:19 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:58:28 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:58:37 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:58:46 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:58:55 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:59:04 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:59:13 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:59:22 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:59:31 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:59:40 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:59:49 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 11:59:58 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:00:07 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:00:16 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:00:26 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:00:35 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:00:44 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:00:53 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:01:02 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:01:11 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:01:20 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:01:29 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:01:38 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:01:47 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:01:56 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:02:05 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:02:14 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:02:23 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:02:32 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:02:41 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:02:50 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:02:59 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:03:08 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:03:17 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:03:26 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:03:35 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:03:44 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:03:53 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:04:02 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:04:11 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:04:20 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-12 12:04:29 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-12 12:04:40 - 注册中心停止了服务 : [WinError 10061] 由于目标计算机积极拒绝，无法连接。
