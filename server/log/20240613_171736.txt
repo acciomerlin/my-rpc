@@ -1,7 +1,0 @@
-[INFO]2024-06-13 17:17:36 - 读取注册中心配置：Registry IP&PORT: 172.17.27.110:9999
-[INFO]2024-06-13 17:17:36 - 注册方法：add
-[INFO]2024-06-13 17:17:36 - 注册方法：hi
-[INFO]2024-06-13 17:17:36 - From 0.0.0.0:8888 start listening...
-[ERROR]2024-06-13 17:17:38 - 与注册中心建立HTTP连接时发生错误，停止与注册中心联系：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
-[INFO]2024-06-13 17:17:46 - Received KeyboardInterrupt, stopping...
-[INFO]2024-06-13 17:17:46 - Server service stopped.
