@@ -1,0 +1,10 @@
+[INFO] 2024-06-13 10:12:55 - Starting registry server on 172.17.49.211 port 9999
+[INFO] 2024-06-13 10:13:00 - 健康检测已在后台开启
+[INFO] 2024-06-13 10:13:00 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 10:13:01 - Register instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+
+[INFO] 2024-06-13 10:13:05 - Health check==================>
+[INFO] 2024-06-13 10:13:05 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 10:13:01
+[INFO] 2024-06-13 10:13:05 - Main thread received KeyboardInterrupt, stopping...
+[INFO] 2024-06-13 10:13:05 - Registry service stopped.

@@ -1,0 +1,216 @@
+[INFO] 2024-06-13 08:21:39 - Starting registry server on 172.17.49.211 port 9999
+[INFO] 2024-06-13 08:21:44 - 健康检测已在后台开启
+[INFO] 2024-06-13 08:21:44 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:21:49 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:21:54 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:21:59 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:22:02 - Register instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+
+[INFO] 2024-06-13 08:22:04 - Health check==================>
+[INFO] 2024-06-13 08:22:04 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:02
+[INFO] 2024-06-13 08:22:09 - Health check==================>
+[INFO] 2024-06-13 08:22:09 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:02
+[INFO] 2024-06-13 08:22:11 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:22:11 - Its last registered time: 2024-06-13 08:22:02
+[INFO] 2024-06-13 08:22:11 - Updated its timestamp: 2024-06-13 08:22:11
+
+[INFO] 2024-06-13 08:22:14 - Health check==================>
+[INFO] 2024-06-13 08:22:14 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:11
+[INFO] 2024-06-13 08:22:19 - Health check==================>
+[INFO] 2024-06-13 08:22:19 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:11
+[INFO] 2024-06-13 08:22:20 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:22:20 - Its last registered time: 2024-06-13 08:22:11
+[INFO] 2024-06-13 08:22:20 - Updated its timestamp: 2024-06-13 08:22:20
+
+[INFO] 2024-06-13 08:22:24 - Health check==================>
+[INFO] 2024-06-13 08:22:24 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:20
+[INFO] 2024-06-13 08:22:29 - Health check==================>
+[INFO] 2024-06-13 08:22:29 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:20
+[INFO] 2024-06-13 08:22:29 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:22:29 - Its last registered time: 2024-06-13 08:22:20
+[INFO] 2024-06-13 08:22:29 - Updated its timestamp: 2024-06-13 08:22:29
+
+[INFO] 2024-06-13 08:22:34 - Health check==================>
+[INFO] 2024-06-13 08:22:34 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:29
+[INFO] 2024-06-13 08:22:38 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:22:38 - Its last registered time: 2024-06-13 08:22:29
+[INFO] 2024-06-13 08:22:38 - Updated its timestamp: 2024-06-13 08:22:38
+
+[INFO] 2024-06-13 08:22:39 - Health check==================>
+[INFO] 2024-06-13 08:22:39 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:38
+[INFO] 2024-06-13 08:22:44 - Health check==================>
+[INFO] 2024-06-13 08:22:44 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:38
+[INFO] 2024-06-13 08:22:47 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:22:47 - Its last registered time: 2024-06-13 08:22:38
+[INFO] 2024-06-13 08:22:47 - Updated its timestamp: 2024-06-13 08:22:47
+
+[INFO] 2024-06-13 08:22:49 - Health check==================>
+[INFO] 2024-06-13 08:22:49 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:47
+[INFO] 2024-06-13 08:22:54 - Health check==================>
+[INFO] 2024-06-13 08:22:54 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:47
+[INFO] 2024-06-13 08:22:57 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:22:57 - Its last registered time: 2024-06-13 08:22:47
+[INFO] 2024-06-13 08:22:57 - Updated its timestamp: 2024-06-13 08:22:57
+
+[INFO] 2024-06-13 08:22:59 - Health check==================>
+[INFO] 2024-06-13 08:22:59 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:57
+[INFO] 2024-06-13 08:23:04 - Health check==================>
+[INFO] 2024-06-13 08:23:04 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:22:57
+[INFO] 2024-06-13 08:23:06 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:23:06 - Its last registered time: 2024-06-13 08:22:57
+[INFO] 2024-06-13 08:23:06 - Updated its timestamp: 2024-06-13 08:23:06
+
+[INFO] 2024-06-13 08:23:09 - Health check==================>
+[INFO] 2024-06-13 08:23:09 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:06
+[INFO] 2024-06-13 08:23:14 - Health check==================>
+[INFO] 2024-06-13 08:23:14 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:06
+[INFO] 2024-06-13 08:23:15 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:23:15 - Its last registered time: 2024-06-13 08:23:06
+[INFO] 2024-06-13 08:23:15 - Updated its timestamp: 2024-06-13 08:23:15
+
+[INFO] 2024-06-13 08:23:19 - Health check==================>
+[INFO] 2024-06-13 08:23:19 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:15
+[INFO] 2024-06-13 08:23:24 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:23:24 - Its last registered time: 2024-06-13 08:23:15
+[INFO] 2024-06-13 08:23:24 - Updated its timestamp: 2024-06-13 08:23:24
+
+[INFO] 2024-06-13 08:23:24 - Health check==================>
+[INFO] 2024-06-13 08:23:24 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:24
+[INFO] 2024-06-13 08:23:29 - Health check==================>
+[INFO] 2024-06-13 08:23:29 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:24
+[INFO] 2024-06-13 08:23:33 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:23:33 - Its last registered time: 2024-06-13 08:23:24
+[INFO] 2024-06-13 08:23:33 - Updated its timestamp: 2024-06-13 08:23:33
+
+[INFO] 2024-06-13 08:23:34 - Health check==================>
+[INFO] 2024-06-13 08:23:34 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:33
+[INFO] 2024-06-13 08:23:39 - Health check==================>
+[INFO] 2024-06-13 08:23:39 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:33
+[INFO] 2024-06-13 08:23:42 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:23:42 - Its last registered time: 2024-06-13 08:23:33
+[INFO] 2024-06-13 08:23:42 - Updated its timestamp: 2024-06-13 08:23:42
+
+[INFO] 2024-06-13 08:23:44 - Health check==================>
+[INFO] 2024-06-13 08:23:44 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:42
+[INFO] 2024-06-13 08:23:49 - Health check==================>
+[INFO] 2024-06-13 08:23:49 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:42
+[INFO] 2024-06-13 08:23:51 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:23:51 - Its last registered time: 2024-06-13 08:23:42
+[INFO] 2024-06-13 08:23:51 - Updated its timestamp: 2024-06-13 08:23:51
+
+[INFO] 2024-06-13 08:23:54 - Health check==================>
+[INFO] 2024-06-13 08:23:54 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:51
+[INFO] 2024-06-13 08:23:59 - Health check==================>
+[INFO] 2024-06-13 08:23:59 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:23:51
+[INFO] 2024-06-13 08:24:00 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:24:00 - Its last registered time: 2024-06-13 08:23:51
+[INFO] 2024-06-13 08:24:00 - Updated its timestamp: 2024-06-13 08:24:00
+
+[INFO] 2024-06-13 08:24:04 - Health check==================>
+[INFO] 2024-06-13 08:24:04 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:00
+[INFO] 2024-06-13 08:24:09 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:24:09 - Its last registered time: 2024-06-13 08:24:00
+[INFO] 2024-06-13 08:24:09 - Updated its timestamp: 2024-06-13 08:24:09
+
+[INFO] 2024-06-13 08:24:09 - Health check==================>
+[INFO] 2024-06-13 08:24:09 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:09
+[INFO] 2024-06-13 08:24:14 - Health check==================>
+[INFO] 2024-06-13 08:24:14 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:09
+[INFO] 2024-06-13 08:24:18 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:24:18 - Its last registered time: 2024-06-13 08:24:09
+[INFO] 2024-06-13 08:24:18 - Updated its timestamp: 2024-06-13 08:24:18
+
+[INFO] 2024-06-13 08:24:19 - Health check==================>
+[INFO] 2024-06-13 08:24:19 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:18
+[INFO] 2024-06-13 08:24:24 - Health check==================>
+[INFO] 2024-06-13 08:24:24 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:18
+[INFO] 2024-06-13 08:24:27 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:24:27 - Its last registered time: 2024-06-13 08:24:18
+[INFO] 2024-06-13 08:24:27 - Updated its timestamp: 2024-06-13 08:24:27
+
+[INFO] 2024-06-13 08:24:29 - Health check==================>
+[INFO] 2024-06-13 08:24:29 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:27
+[INFO] 2024-06-13 08:24:34 - Health check==================>
+[INFO] 2024-06-13 08:24:34 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:27
+[INFO] 2024-06-13 08:24:36 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:24:36 - Its last registered time: 2024-06-13 08:24:27
+[INFO] 2024-06-13 08:24:36 - Updated its timestamp: 2024-06-13 08:24:36
+
+[INFO] 2024-06-13 08:24:39 - Health check==================>
+[INFO] 2024-06-13 08:24:39 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:36
+[INFO] 2024-06-13 08:24:44 - Health check==================>
+[INFO] 2024-06-13 08:24:44 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:36
+[INFO] 2024-06-13 08:24:45 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:24:45 - Its last registered time: 2024-06-13 08:24:36
+[INFO] 2024-06-13 08:24:45 - Updated its timestamp: 2024-06-13 08:24:45
+
+[INFO] 2024-06-13 08:24:49 - Health check==================>
+[INFO] 2024-06-13 08:24:49 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:45
+[INFO] 2024-06-13 08:24:54 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:24:54 - Its last registered time: 2024-06-13 08:24:45
+[INFO] 2024-06-13 08:24:54 - Updated its timestamp: 2024-06-13 08:24:54
+
+[INFO] 2024-06-13 08:24:54 - Health check==================>
+[INFO] 2024-06-13 08:24:54 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:54
+[INFO] 2024-06-13 08:24:59 - Health check==================>
+[INFO] 2024-06-13 08:24:59 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:24:54
+[INFO] 2024-06-13 08:25:03 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:25:03 - Its last registered time: 2024-06-13 08:24:54
+[INFO] 2024-06-13 08:25:03 - Updated its timestamp: 2024-06-13 08:25:03
+
+[INFO] 2024-06-13 08:25:04 - Health check==================>
+[INFO] 2024-06-13 08:25:04 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:03
+[INFO] 2024-06-13 08:25:09 - Health check==================>
+[INFO] 2024-06-13 08:25:09 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:03
+[INFO] 2024-06-13 08:25:12 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:25:12 - Its last registered time: 2024-06-13 08:25:03
+[INFO] 2024-06-13 08:25:12 - Updated its timestamp: 2024-06-13 08:25:12
+
+[INFO] 2024-06-13 08:25:14 - Health check==================>
+[INFO] 2024-06-13 08:25:14 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:12
+[INFO] 2024-06-13 08:25:19 - Health check==================>
+[INFO] 2024-06-13 08:25:19 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:12
+[INFO] 2024-06-13 08:25:21 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:25:21 - Its last registered time: 2024-06-13 08:25:12
+[INFO] 2024-06-13 08:25:21 - Updated its timestamp: 2024-06-13 08:25:21
+
+[INFO] 2024-06-13 08:25:24 - Health check==================>
+[INFO] 2024-06-13 08:25:24 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:21
+[INFO] 2024-06-13 08:25:29 - Health check==================>
+[INFO] 2024-06-13 08:25:29 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:21
+[INFO] 2024-06-13 08:25:30 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:25:30 - Its last registered time: 2024-06-13 08:25:21
+[INFO] 2024-06-13 08:25:30 - Updated its timestamp: 2024-06-13 08:25:30
+
+[INFO] 2024-06-13 08:25:34 - Health check==================>
+[INFO] 2024-06-13 08:25:34 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:30
+[INFO] 2024-06-13 08:25:39 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:25:39 - Its last registered time: 2024-06-13 08:25:30
+[INFO] 2024-06-13 08:25:39 - Updated its timestamp: 2024-06-13 08:25:39
+
+[INFO] 2024-06-13 08:25:39 - Health check==================>
+[INFO] 2024-06-13 08:25:39 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:39
+[INFO] 2024-06-13 08:25:44 - Health check==================>
+[INFO] 2024-06-13 08:25:44 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:39
+[INFO] 2024-06-13 08:25:48 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:25:48 - Its last registered time: 2024-06-13 08:25:39
+[INFO] 2024-06-13 08:25:48 - Updated its timestamp: 2024-06-13 08:25:48
+
+[INFO] 2024-06-13 08:25:49 - Health check==================>
+[INFO] 2024-06-13 08:25:49 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:48
+[INFO] 2024-06-13 08:25:54 - Health check==================>
+[INFO] 2024-06-13 08:25:54 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:48
+[INFO] 2024-06-13 08:25:57 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 08:25:57 - Its last registered time: 2024-06-13 08:25:48
+[INFO] 2024-06-13 08:25:57 - Updated its timestamp: 2024-06-13 08:25:57
+
+[INFO] 2024-06-13 08:25:59 - Health check==================>
+[INFO] 2024-06-13 08:25:59 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:57
+[INFO] 2024-06-13 08:26:04 - Health check==================>
+[INFO] 2024-06-13 08:26:04 - Instance InstanceMeta(protocol=json, host=172.17.49.211, port=8887, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 08:25:57
+[INFO] 2024-06-13 08:26:06 - Main thread received KeyboardInterrupt, stopping...
+[INFO] 2024-06-13 08:26:06 - Registry service stopped.

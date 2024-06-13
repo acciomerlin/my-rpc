@@ -1,0 +1,16 @@
+[INFO]2024-06-13 09:08:56 - 读取注册中心配置：Registry IP&PORT: 172.17.49.211:9999
+[INFO]2024-06-13 09:08:56 - 注册方法：add
+[INFO]2024-06-13 09:08:56 - 注册方法：hi
+[INFO]2024-06-13 09:08:56 - From 0.0.0.0:8887 start listening...
+[INFO]2024-06-13 09:08:56 - SUCCESSFULLY REGISTER TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.49.211', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 09:09:05 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.49.211', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-13 09:09:06 - accept client timed out
+[INFO]2024-06-13 09:09:14 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.49.211', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 09:09:16 - Main thread received KeyboardInterrupt, stopping...
+[INFO]2024-06-13 09:09:23 - Server service stopped.

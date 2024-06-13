@@ -1,0 +1,32 @@
+[INFO]2024-06-13 00:59:38 - 读取注册中心配置：Registry IP&PORT: 172.27.14.0:9999
+[INFO]2024-06-13 00:59:38 - 注册方法：add
+[INFO]2024-06-13 00:59:38 - 注册方法：hi
+[INFO]2024-06-13 00:59:38 - From 0.0.0.0:8887 start listening...
+[INFO]2024-06-13 00:59:47 - SUCCESSFULLY REGISTER TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 00:59:55 - 与客户端('172.27.14.0', 61611)建立了连接
+[INFO]2024-06-13 00:59:56 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 01:00:05 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 01:00:15 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 01:00:24 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 01:00:33 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 01:00:42 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 01:00:51 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 01:01:00 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================

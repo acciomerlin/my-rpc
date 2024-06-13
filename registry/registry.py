@@ -253,15 +253,17 @@ def run(server_class=ThreadingHTTPServer, handler_class=RequestHandler, host='0.
 
 
 if __name__ == '__main__':
+    # 启动参数设置
     pars = argparse.ArgumentParser(description='Registry Center HTTP Server')
     pars.add_argument('-l', '--host', type=str, default='0.0.0.0',
                       help='注册中心监听的 IP 地址，同时支持 IPv4 和 IPv6，可以为空，默认监听所有 IP 地址')
     pars.add_argument('-p', '--port', type=int, required=True,
                       help='注册中心监听的端口号，不可为空')
-
     args = pars.parse_args()
 
+    # 日志与注册中心服务实例创建
     logger = Log()
     rs = RegistryService(logger)
 
+    # 启动注册中心
     run(host=args.host, port=args.port, registry_service=rs, logger=logger)

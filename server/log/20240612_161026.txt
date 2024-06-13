@@ -1,0 +1,7 @@
+[INFO]2024-06-12 16:10:26 - 读取注册中心配置：Registry IP&PORT: 172.27.14.0:9999
+[INFO]2024-06-12 16:10:26 - 注册方法：add
+[INFO]2024-06-12 16:10:26 - 注册方法：hi
+[INFO]2024-06-12 16:10:26 - From 0.0.0.0:8887 start listening...
+[ERROR]2024-06-12 16:10:31 - accept client timed out
+[ERROR]2024-06-12 16:10:36 - accept client timed out
+[ERROR]2024-06-12 16:10:37 - 注册中心停止了服务 : [WinError 10061] 由于目标计算机积极拒绝，无法连接。

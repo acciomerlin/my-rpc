@@ -1,0 +1,24 @@
+[INFO] 2024-06-13 08:20:20 - Starting registry server on 172.17.49.211 port 9999
+[INFO] 2024-06-13 08:20:25 - 健康检测已在后台开启
+[INFO] 2024-06-13 08:20:25 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:20:30 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:20:35 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:20:40 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:20:45 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:20:50 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:20:55 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:21:00 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:21:05 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:21:10 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 08:21:11 - Main thread received KeyboardInterrupt, stopping...
+[INFO] 2024-06-13 08:21:11 - Registry service stopped.

@@ -1,3 +1,4 @@
+import argparse
 import configparser
 import http.client
 import json
@@ -5,11 +6,12 @@ import os
 import socket
 import threading
 import time
-import argparse
 from datetime import datetime
 
 
 class InstanceMeta:
+    """服务实例注册与发现使用的数据结构"""
+
     def __init__(self, protocol=None, host=None, port=None):
         self.protocol = protocol
         self.host = host
@@ -17,9 +19,16 @@ class InstanceMeta:
         self.status = None
         self.parameters = {}
 
-    def add_parameters(self, parameters):
-        self.parameters.update(parameters)
-        return self
+    @staticmethod
+    def from_dict(data):
+        instance = InstanceMeta(
+            protocol=data.get('protocol'),
+            host=data.get('host'),
+            port=data.get('port'),
+        )
+        instance.status = data.get('status')
+        instance.parameters = data.get('parameters', {})
+        return instance
 
     def to_dict(self):
         return {
@@ -30,122 +39,84 @@ class InstanceMeta:
             'parameters': self.parameters
         }
 
+    def get_parameters(self):
+        return self.parameters
 
-class Log(object):
+    def add_parameters(self, parameters):
+        self.parameters.update(parameters)
+        return self
+
+    def get_status(self):
+        return self.status
+
+    def set_status(self, status):
+        self.status = status
+
+    def __eq__(self, other):
+        if not isinstance(other, InstanceMeta):
+            return False
+        return self.protocol == other.protocol and self.host == other.host and self.port == other.port
+
+    def __hash__(self):
+        return hash((self.protocol, self.host, self.port))
+
+    def __str__(self):
+        return (f"InstanceMeta(protocol={self.protocol}, host={self.host}, port={self.port}, "
+                f"status={self.status}, parameters={self.parameters})")
+
+
+class Logger:
     def __init__(self):
         if not os.path.exists('./log'):
             os.makedirs('./log')
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         self.log_filename = f'./log/{timestamp}.txt'
 
-    # 定义一个日志函数
-    def info_log(self, msg):
+    def log(self, level, msg):
         with open(self.log_filename, 'a') as log_file:
-            log_file.write(f'[INFO]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
-        print(f'[INFO]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
+            log_file.write(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
+        print(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
 
-    def error_log(self, msg):
-        with open(self.log_filename, 'a') as log_file:
-            log_file.write(f'[ERROR]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
-        print(f'[ERROR]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
+    def info(self, msg):
+        self.log('INFO', msg)
+
+    def error(self, msg):
+        self.log('ERROR', msg)
 
 
-class TCPServer(object):
-    def __init__(self, host=None, port=None):
-        self.port = port
-        self.host = host
-        self.sock = None
-        self.addr_type = None
-        self.set_up_socket()
+class ServerStub:
+    def __init__(self, logger):
+        self.services = {}
+        self.logger = logger
 
-    def set_up_socket(self):
-        if '.' in self.host:
-            self.addr_type = socket.AF_INET
-        else:
-            self.addr_type = socket.AF_INET6
-        # 创建socket工具对象
-        self.sock = socket.socket(self.addr_type, socket.SOCK_STREAM)
-        # 设置socket重用地址
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    def register_services(self, method, name=None):
+        if name is None:
+            name = method.__name__
+        self.services[name] = method
+        self.logger.info(f"注册方法：{name}")
 
-    def bind_listen(self):
-        self.sock.bind((self.host, self.port))
-        self.sock.listen(5)  # 参数 5 表示在拒绝连接之前，操作系统可以挂起的最大连接数（称为 "backlog"）。如果有超过 5 个连接等待处理，新连接将会被拒绝。
-
-    def handle(self, client_sock, client_addr):
-        """拿请求消息，处理请求消息，回传处理结果，与客户端长连接知道对方无情求，关闭连接"""
+    def call_method(self, req, client_addr):
+        req_data = json.loads(req.decode('utf-8'))
+        self.logger.info(f"来自客户端{str(client_addr)}的请求数据{req_data}")
+        method_name = req_data['method_name']
+        method_args = req_data['method_args']
+        method_kwargs = req_data['method_kwargs']
         try:
-            while True:
-                msg = client_sock.recv(1024)
-                if not msg:
-                    raise EOFError()
-                data = self._process(msg)
-                client_sock.sendall(data)
-        except EOFError:
-            # 客户端关闭了连接
-            self.info_log(f'客户端{str(client_addr)}关闭了连接')
-            client_sock.close()
-
-    def accept_receive_close(self):
-        """建立与client的连接，处理请求，多线程"""
-        try:
-            self.sock.settimeout(3)
-            client_sock, client_addr = self.sock.accept()
-            self.info_log(f'与客户端{str(client_addr)}建立了连接')
-
-            # 创建子线程处理此客户端
-            t = threading.Thread(target=self.handle, args=(client_sock, client_addr))
-            # 启动子线程，主线程继续循环接收另一个客户端连接的请求
-            t.start()
-        except socket.timeout as e:
-            self.error_log(f"{e}")
-        except socket.error as e:
-            self.error_log(f"Error accepting connection: {e}")
-
-
-class JSONRPC(object):
-    def __init__(self):
-        self.data = None
-
-    def decode_data(self, req):
-        """解析JSON格式序列化后的请求数据"""
-        self.data = json.loads(req.decode('utf-8'))
-        self.info_log(f"来自客户端的请求数据{self.data}")
-
-    def call_method(self, req):
-        """解析JSON格式的方法请求data，调用对应方法并将执行结果返回"""
-        self.decode_data(req)
-        method_name = self.data['method_name']
-        method_args = self.data['method_args']
-        method_kwargs = self.data['method_kwargs']
-
-        try:
-            res = self.services[method_name](*method_args, **method_kwargs)  # ServerStub的存注册服务的字典
+            res = self.services[method_name](*method_args, **method_kwargs)
         except KeyError:
             res = f"No service found for: {method_name}"
         except TypeError as e:
             res = f"Argument error: {e}"
         except Exception as e:
             res = f"Error calling method: {e}"
-        reply = {"res": res}
-        return json.dumps(reply).encode('utf-8')
+        reply_raw = {"res": res}
+        reply = json.dumps(reply_raw).encode('utf-8')
+        self.logger.info(f"给客户端{str(client_addr)}的回复{reply}")
+        return reply
 
 
-class ServerStub(object):
-    def __init__(self):
-        self.services = {}
-
-    def register_services(self, method, name=None):
-        """SERVER 服务注册，CLIENT只可调用被注册的服务"""
-        if name is None:
-            name = method.__name__  # 内置属性，用于获取函数或方法的名称
-        self.services[name] = method
-        self.info_log(f"注册方法：{name}")
-
-
-class RegistryClient(object):
-    def __init__(self):
-        # 读取配置文件
+class RegistryClient:
+    def __init__(self, logger):
         config = configparser.ConfigParser()
         config.read('config.ini')
         registry_host = config['registry']['host']
@@ -154,47 +125,47 @@ class RegistryClient(object):
         self.registry_port = registry_port
         self.servers_cache = []
         self.first_register = True
-        self.info_log(f"读取注册中心配置：Registry IP&PORT: {registry_host}:{registry_port}")  # test
+        self.stop_event = None
+        self.logger = logger
+        self.logger.info(f"读取注册中心配置：Registry IP&PORT: {registry_host}:{registry_port}")
 
-    def register_to_registry(self):
+    def register_to_registry(self, host, port):
         conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
         headers = {'Content-type': 'application/json'}
 
-        # instance = InstanceMeta("json", self.host, self.port)
-        # 注册时 ip 不能 0.0.0.0
-        instance = InstanceMeta("json", socket.gethostbyname(socket.gethostname()), self.port)
+        if host == '0.0.0.0':
+            instance = InstanceMeta("json", socket.gethostbyname(socket.gethostname()), port)
+        else:
+            instance = InstanceMeta("json", host, port)
 
-        # 例子，还可加各种备注
         instance.add_parameters({'ip_proto': 'ipv4'})
         instance_data = json.dumps(instance.to_dict())
 
-        try:
-            conn.request("POST", "/myRegistry/register?proto=json", instance_data, headers)
-            response = conn.getresponse()
-            if response.status == 200:
-                response_data = json.loads(response.read().decode())
-                if self.first_register:
-                    self.info_log(f"SUCCESSFULLY REGISTER TO THE REGISTRY: \n{response_data}\n===================")
-                    self.first_register = False
-                else:
-                    self.info_log(
-                        f"SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: \n{response_data}\n===================")
+        conn.request("POST", "/myRegistry/register?proto=json", instance_data, headers)
+        response = conn.getresponse()
+        if response.status == 200:
+            response_data = json.loads(response.read().decode())
+            if self.first_register:
+                self.logger.info(f"SUCCESSFULLY REGISTER TO THE REGISTRY: \n{response_data}\n===================")
+                self.first_register = False
             else:
-                if self.first_register:
-                    self.error_log(f"FAIL TO REGISTER TO THE REGISTRY: \n{response.read().decode()}\n=================")
-                else:
-                    self.error_log(
-                        f"FAIL TO SEND HEARTBEAT TO THE REGISTRY: \n{response.read().decode()}\n=================")
-        except TimeoutError or ConnectionRefusedError as e:
-            self.error_log(f'与注册中心建立HTTP连接时发生错误：{e}')
+                self.logger.info(
+                    f"SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: \n{response_data}\n===================")
+        else:
+            if self.first_register:
+                self.logger.error(
+                    f"FAIL TO REGISTER TO THE REGISTRY: \n{response.read().decode()}\n=================")
+            else:
+                self.logger.error(
+                    f"FAIL TO SEND HEARTBEAT TO THE REGISTRY: \n{response.read().decode()}\n=================")
 
         conn.close()
 
-    def unregister_from_registry(self):
+    def unregister_from_registry(self, host, port):
         conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
         headers = {'Content-type': 'application/json'}
 
-        instance = InstanceMeta("json", self.host, self.port)
+        instance = InstanceMeta("json", host, port)
         instance_data = json.dumps(instance.to_dict())
 
         try:
@@ -202,61 +173,134 @@ class RegistryClient(object):
             response = conn.getresponse()
             if response.status == 200:
                 response_data = json.loads(response.read().decode())
-                self.info_log(f"SUCCESSFULLY UNREGISTERED TO THE REGISTRY: \n{response_data}\n===================")
+                self.logger.info(f"SUCCESSFULLY UNREGISTERED TO THE REGISTRY: \n{response_data}\n===================")
             else:
-                self.error_log(f"FAIL TO UNREGISTER TO THE REGISTRY: \n{response.read().decode()}\n=================")
-        except TimeoutError or ConnectionRefusedError as e:
-            self.error_log(f'与注册中心建立HTTP连接时发生错误：{e}')
+                self.logger.error(
+                    f"FAIL TO UNREGISTER TO THE REGISTRY: \n{response.read().decode()}\n=================")
+        except (TimeoutError, ConnectionRefusedError) as e:
+            self.logger.error(f'与注册中心建立HTTP连接时发生错误：{e}')
 
         conn.close()
 
-    def register_send_heartbeat(self):
-        try:
-            while True:
+    def register_send_heartbeat(self, host, port, stop_e):
+        self.stop_event = stop_e
+        while not self.stop_event.is_set():
+            try:
+                self.register_to_registry(host, port)
                 time.sleep(9)
-                self.register_to_registry()
-        except KeyboardInterrupt as e:
-            self.info_log(f"Exit by Ctrl+C")
-            exit(-1)
-        except ConnectionError as e:
-            self.error_log(f"注册中心停止了服务 : {e}")
-            exit(-1)
+            except (TimeoutError, ConnectionRefusedError) as e:
+                self.logger.error(f'与注册中心建立HTTP连接时发生错误：{e}')
+                self.stop_event.set()
 
 
-class RPCServer(TCPServer, JSONRPC, ServerStub, RegistryClient, Log):
+class TCPServer:
+    def __init__(self, host, port, logger, stop_event):
+        self.port = port
+        self.host = host
+        self.logger = logger
+        self.sock = None
+        self.addr_type = None
+        self.stop_event = stop_event
+        self.set_up_socket()
+
+    def set_up_socket(self):
+        if '.' in self.host:
+            self.addr_type = socket.AF_INET
+        else:
+            self.addr_type = socket.AF_INET6
+        self.sock = socket.socket(self.addr_type, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((self.host, self.port))
+        self.sock.listen(5)
+
+    def send_tcp_server_stop_signal(self):
+        # 本地创建一个tcp client socket给server socket连一次关一次表示停止信号，解决accept不设timeout就无限期阻塞的问题
+        h_socket = socket.socket(self.addr_type, socket.SOCK_STREAM)
+        try:
+            h_socket.connect(('localhost', self.port))
+            h_socket.close()
+        except Exception as e:
+            e_name = e.__class__.__name__
+            self.logger.info(f"Received Exception {e_name}, stopping...")
+
+    def loop_detect_stop_signal(self):
+        while True:
+            time.sleep(0.1)  # 让线程不至于占满CPU
+            if self.stop_event.is_set():
+                self.send_tcp_server_stop_signal()
+                break
+
+    def rpc_client_handler(self, client_sock, client_addr):
+        """rpc server处理每个client请求的handler，由继承的RPCServer实现"""
+        pass
+
+    def loop_accept_client(self):
+        while not self.stop_event.is_set():
+            try:
+                client_sock, client_addr = self.sock.accept()
+            except socket.timeout as e:
+                if not self.stop_event.is_set():
+                    self.logger.error(f"accept client {e}")
+                continue
+            except socket.error as e:
+                if not self.stop_event.is_set():
+                    self.logger.error(f"Error accepting connection: {e}")
+                continue
+            if not self.stop_event.is_set():
+                self.logger.info(f'与客户端{str(client_addr)}建立了连接')
+            t = threading.Thread(target=self.rpc_client_handler, args=(client_sock, client_addr))
+            t.start()
+        self.sock.close()  # 然后关闭自身socket
+
+
+class RPCServer(TCPServer):
     def __init__(self, host, port):
-        Log.__init__(self)
-        TCPServer.__init__(self, host, port)
-        JSONRPC.__init__(self)
-        ServerStub.__init__(self)
-        RegistryClient.__init__(self)
-        self.running = True
+        self.logger = Logger()
+        self.stub = ServerStub(self.logger)
+        self.registry_client = RegistryClient(self.logger)
+        # 线程管理.....
+        self.stop_event = threading.Event()
+        super().__init__(host, port, self.logger, self.stop_event)
+        self._tcp_serve_thread = threading.Thread(target=self.loop_accept_client)
+        self._listen_stop_sig_thread = threading.Thread(target=self.loop_detect_stop_signal)
+
+    def rpc_client_handler(self, client_sock, client_addr):
+        try:
+            while not self.stop_event.is_set():
+                msg = client_sock.recv(1024)
+                if not msg:
+                    raise EOFError()
+                response_data = self.stub.call_method(msg, client_addr)
+                client_sock.sendall(response_data)
+        except EOFError:
+            self.logger.info(f'info on handle: 客户端{str(client_addr)}关闭了连接')
+        except ConnectionResetError:
+            self.logger.error(f'except on handle: 客户端{str(client_addr)}异常地关闭了连接')
+        finally:
+            client_sock.close()
 
     def serve(self):
-        # 循环监听端口
-        self.bind_listen()
-        self.info_log(f"From {self.host}:{self.port} start listening...")
-
-        # 向注册中心注册服务并定期发送心跳
-        threading.Thread(target=self.register_send_heartbeat()).start()
-
-        while True:
-            self.accept_receive_close()
-
-    def _process(self, msg):
-        return self.call_method(msg)
+        self.logger.info(f"From {self.host}:{self.port} start listening...")
+        self._tcp_serve_thread.start()
+        self._listen_stop_sig_thread.start()
+        try:
+            self.registry_client.register_send_heartbeat(self.host, self.port, self.stop_event)
+        except KeyboardInterrupt:
+            self.stop_event.set()
+            self.logger.info("Received KeyboardInterrupt, stopping...")
+        finally:
+            self.logger.info("Server service stopped.")
+            exit(0)
 
 
 """要注册的函数们"""
 
 
 def add(a, b, c=10):
-    sum = a + b + c
-    return sum
+    return a + b + c
 
 
 def hi(user):
-    print(f"hi {user}, welcome")
     time.sleep(3)
     return f"hi {user}, welcome"
 
@@ -270,7 +314,7 @@ if __name__ == '__main__':
 
     args = pars.parse_args()
 
-    s = RPCServer(args.host, args.port)
-    s.register_services(add)
-    s.register_services(hi)
-    s.serve()
+    server = RPCServer(args.host, args.port)
+    server.stub.register_services(add)
+    server.stub.register_services(hi)
+    server.serve()

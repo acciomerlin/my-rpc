@@ -110,6 +110,7 @@ class RPCClient(RegistryClient, TCPClient):
         def _func(*args, **kwargs):
             try:
                 self.connect_server_by_registry()
+                print('hi _func113')
                 dic = {'method_name': method, 'method_args': args, 'method_kwargs': kwargs}
                 self.send(json.dumps(dic).encode('utf-8'))
                 response = self.recv(1024)
@@ -169,7 +170,5 @@ class RPCClient(RegistryClient, TCPClient):
 if __name__ == '__main__':
     client = RPCClient()
     i = 0
-    while True:
-        time.sleep(3)
-        i += 1
-        client.hi(i)
+    res = client.hi(i)
+    print(res)

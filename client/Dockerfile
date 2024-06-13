@@ -16,5 +16,5 @@ COPY . .
 # 安装 Python 依赖项（如果有 requirements.txt 文件）
 # RUN pip install -r requirements.txt
 
-# 运行 rpc_consumer.py 作为容器的入口点
+# 运行 client.py 作为容器的入口点
 ENTRYPOINT ["python", "rpc_consumer.py"]

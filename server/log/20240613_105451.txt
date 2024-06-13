@@ -1,0 +1,9 @@
+[INFO]2024-06-13 10:54:51 - 读取注册中心配置：Registry IP&PORT: 172.17.49.211:9999
+[INFO]2024-06-13 10:54:51 - 注册方法：add
+[INFO]2024-06-13 10:54:51 - 注册方法：hi
+[INFO]2024-06-13 10:54:51 - From 0.0.0.0:8887 start listening...
+[INFO]2024-06-13 10:54:51 - SUCCESSFULLY REGISTER TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.49.211', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 10:54:53 - Received KeyboardInterrupt, stopping...
+[INFO]2024-06-13 10:54:53 - Server service stopped.

@@ -1,0 +1,43 @@
+[INFO]2024-06-13 00:57:56 - 读取注册中心配置：Registry IP&PORT: 172.27.14.0:9999
+[INFO]2024-06-13 00:57:56 - 注册方法：add
+[INFO]2024-06-13 00:57:56 - 注册方法：hi
+[INFO]2024-06-13 00:57:56 - From 0.0.0.0:8887 start listening...
+[INFO]2024-06-13 00:58:05 - SUCCESSFULLY REGISTER TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-13 00:58:06 - accept client timed out
+[INFO]2024-06-13 00:58:14 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-13 00:58:16 - accept client timed out
+[INFO]2024-06-13 00:58:23 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-13 00:58:26 - accept client timed out
+[INFO]2024-06-13 00:58:32 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-13 00:58:36 - accept client timed out
+[INFO]2024-06-13 00:58:41 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 00:58:45 - 与客户端('172.27.14.0', 61569)建立了连接
+[INFO]2024-06-13 00:58:50 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-13 00:58:55 - accept client timed out
+[INFO]2024-06-13 00:59:00 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-13 00:59:05 - accept client timed out
+[INFO]2024-06-13 00:59:09 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[ERROR]2024-06-13 00:59:15 - accept client timed out
+[INFO]2024-06-13 00:59:18 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 00:59:25 - Exit by Ctrl+C
+[INFO]2024-06-13 00:59:27 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.14.0', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
