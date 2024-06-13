@@ -1,10 +1,13 @@
+import argparse
 import configparser
 import http.client
 import json
+import os
 import socket
 import random
 import threading
 import time
+from datetime import datetime
 
 
 # 示例负载均衡模块
@@ -12,12 +15,31 @@ class LoadBalance:
     @staticmethod
     def random(servers):
         s = random.choice(servers)
-        print(f"负载均衡算法：random; 最终选择的服务端为：{s}\n=================")
         return s
 
 
-class RegistryClient(object):
+class Logger:
     def __init__(self):
+        if not os.path.exists('./log'):
+            os.makedirs('./log')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        self.log_filename = f'./log/{timestamp}.txt'
+
+    def log(self, level, msg):
+        with open(self.log_filename, 'a') as log_file:
+            log_file.write(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
+        print(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
+
+    def info(self, msg):
+        self.log('INFO', msg)
+
+    def error(self, msg):
+        self.log('ERROR', msg)
+
+
+class RegistryClient(object):
+    def __init__(self, logger):
+        self.logger = logger
         # 读取配置文件
         config = configparser.ConfigParser()
         config.read('config.ini')
@@ -51,10 +73,10 @@ class RegistryClient(object):
                     tmp_server_set.add((ins['host'], ins['port']))
                 origin_set = self.servers_cache.copy()
                 self.servers_cache = self.servers_cache.union(tmp_server_set)
-                print(f'new fetch: {tmp_server_set}')
-                print(f'old cache: {origin_set}')
+                print(f'新获取到的服务端列表: {tmp_server_set}')
+                print(f'本地旧的服务端列表缓存: {origin_set}')
                 self.servers_cache -= origin_set - tmp_server_set
-                print(f'new cache: {self.servers_cache}')
+                print(f'更新后的本地服务端缓存: {self.servers_cache}')
 
                 servers = list(self.servers_cache)
                 print(f"交付给负载均衡的服务端元组列表：\n{servers}\n=================")
@@ -62,21 +84,30 @@ class RegistryClient(object):
             else:
                 # 与注册中心连接不成功，考虑使用cache
                 return []
+        except (TimeoutError, ConnectionRefusedError) as e:
+            self.logger.error(f'与注册中心建立HTTP连接时发生错误：{e}')
         finally:
             conn.close()
 
 
 class TCPClient(object):
-    def __init__(self):
+    def __init__(self, host=None, port=None):
         self.sock = None
+        self.host = host
+        self.port = port
 
     def new_socket(self):
         """创建一个新的套接字对象"""
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    def connect(self, host, port):
+    def connect(self, host=None, port=None):
         """连接SERVER"""
-        self.sock.connect((host, port))
+        if host is None and port is None:
+            # 没传入，是 connect_by_args，已指定self.host, self.port
+            self.sock.connect((self.host, self.port))
+        else:
+            # 传入，是 connect_by_registry
+            self.sock.connect((host, port))
 
     def send(self, data):
         """发送数据到SERVER"""
@@ -91,12 +122,17 @@ class TCPClient(object):
         self.sock.close()
 
 
-class RPCClient(RegistryClient, TCPClient):
-    def __init__(self):
-        TCPClient.__init__(self)
-        RegistryClient.__init__(self)
+class RPCClient(TCPClient):
+    def __init__(self, host=None, port=None):
+        self.logger = Logger()
+        TCPClient.__init__(self, host, port)
         self.running = True
-        threading.Thread(target=self.poll_registry).start()
+        if host is not None and port is not None:
+            self.mode = 0  # no registry
+        else:
+            self.mode = 1  # with registry
+            self.registry_client = RegistryClient(self.logger)
+            threading.Thread(target=self.poll_registry).start()
 
     def __getattr__(self, method):
         """
@@ -109,25 +145,35 @@ class RPCClient(RegistryClient, TCPClient):
 
         def _func(*args, **kwargs):
             try:
-                self.connect_server_by_registry()
-                print('hi _func113')
+                if self.mode == 0:
+                    self.connect_server_by_args()
+                else:
+                    self.connect_server_by_registry()
                 dic = {'method_name': method, 'method_args': args, 'method_kwargs': kwargs}
                 self.send(json.dumps(dic).encode('utf-8'))
                 response = self.recv(1024)
                 result = json.loads(response.decode('utf-8'))
                 result = result["res"]
             except (json.JSONDecodeError, ConnectionError) as e:
-                print(f"Error occurred: {e}")
-                result = None
-            except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+                self.logger.error(f"Error occurred when calling method {method}: {e}")
                 result = None
             finally:
-                self.sock.close()
+                self.close()
             return result
 
         setattr(self, method, _func)
         return _func
+
+    def connect_server_by_args(self):
+        """服务发现，连接SERVER"""
+        try:
+            # 调用rpc服务，开新sock
+            self.new_socket()
+            host, port = self.host, self.port
+            self.connect(host, port)
+            self.logger.info(f'Connected to server: {host},{port}')
+        except Exception as e:
+            raise ConnectionError(f"Failed to connect to server in connect_server_by_args: {e}")
 
     def connect_server_by_registry(self, protocol="json"):
         """服务发现，连接SERVER"""
@@ -136,27 +182,28 @@ class RPCClient(RegistryClient, TCPClient):
             self.new_socket()
 
             # 第一次用registry find servers,有缓存优先缓存，定期轮询以更新缓存
-            if len(self.servers_cache) == 0:
-                servers = self.findRpcServers(protocol)
-                print("ye")
+            if len(self.registry_client.servers_cache) == 0:
+                servers = self.registry_client.findRpcServers(protocol)
             else:
-                servers = list(self.servers_cache)
+                servers = list(self.registry_client.servers_cache)
             if len(servers) == 0:
-                raise Exception("No servers found")
-            print(f'Found servers: {servers}')
+                self.logger.info("No servers in registry now")
+            else:
+                self.logger.info(f'Found servers: {servers}')
 
             # 负载均衡选server
             server = LoadBalance.random(servers)
+            self.logger.info(f"选择的负载均衡算法：random; 最终选择的服务端为：{server}\n=================")
             host, port = server
-            print(f'Connecting to server: {host},{port}')
-            self.sock.connect((host, port))
+            self.connect(host, port)
+            self.logger.info(f'Connected to server: {host},{port}')
         except Exception as e:
-            raise ConnectionError(f"Failed to connect to server: {e}")
+            raise ConnectionError(f"Failed to connect to server in connect_server_by_registry: {e}")
 
     def poll_registry(self):
         """轮询注册中心，更新本地服务器列表缓存"""
         while self.running:
-            self.findRpcServers()
+            self.registry_client.findRpcServers()
             time.sleep(10)
 
     def stop(self):
@@ -168,7 +215,26 @@ class RPCClient(RegistryClient, TCPClient):
 
 # test
 if __name__ == '__main__':
-    client = RPCClient()
+    parser = argparse.ArgumentParser(description='TCP/JSON RPC Client')
+    parser.add_argument('-i', '--host', type=str, help='客户端需要发送的服务端 ip 地址，同时支持 IPv4 和 IPv6，不得为空')
+    parser.add_argument('-p', '--port', type=int, help='客户端需要发送的服务端端口，不得为空')
+    parser.add_argument('-m', '--mode', type=str, default='registry', choices=['registry', 'server'],
+                        help='客户端模式，默认为server，registry模式不需要指定host和port')
+
+    args = parser.parse_args()
+
+    if args.mode == 'server' and (not args.host or not args.port):
+        parser.error("在server模式下，必须指定host和port参数")
+
+    client = RPCClient(host=args.host, port=args.port)
     i = 0
-    res = client.hi(i)
-    print(res)
+    try:
+        while True:
+            time.sleep(0.1)
+            i += 1
+            print(client.hi(i))
+            if i > 100:
+                break
+    except Exception as e:
+        print(f"Exception occurred in main thread: {e}")
+        exit(0)

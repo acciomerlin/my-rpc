@@ -1,0 +1,97 @@
+[INFO]2024-06-13 15:33:46 - 读取注册中心配置：Registry IP&PORT: 172.27.16.234:9999
+[INFO]2024-06-13 15:33:46 - 注册方法：add
+[INFO]2024-06-13 15:33:46 - 注册方法：hi
+[INFO]2024-06-13 15:33:46 - From 0.0.0.0:8887 start listening...
+[INFO]2024-06-13 15:33:46 - SUCCESSFULLY REGISTER TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:33:49 - 与客户端('172.27.16.234', 54556)建立了连接
+[INFO]2024-06-13 15:33:49 - 来自客户端('172.27.16.234', 54556)的请求数据{'method_name': 'hi', 'method_args': [8], 'method_kwargs': {}}
+[INFO]2024-06-13 15:33:52 - 给客户端('172.27.16.234', 54556)的回复b'{"res": "hi 8, welcome"}'
+[INFO]2024-06-13 15:33:52 - info on handle: 客户端('172.27.16.234', 54556)关闭了连接
+[INFO]2024-06-13 15:33:55 - 与客户端('172.27.16.234', 54565)建立了连接
+[INFO]2024-06-13 15:33:55 - 来自客户端('172.27.16.234', 54565)的请求数据{'method_name': 'hi', 'method_args': [9], 'method_kwargs': {}}
+[INFO]2024-06-13 15:33:55 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:33:58 - 给客户端('172.27.16.234', 54565)的回复b'{"res": "hi 9, welcome"}'
+[INFO]2024-06-13 15:33:58 - info on handle: 客户端('172.27.16.234', 54565)关闭了连接
+[INFO]2024-06-13 15:34:01 - 与客户端('172.27.16.234', 54568)建立了连接
+[INFO]2024-06-13 15:34:01 - 来自客户端('172.27.16.234', 54568)的请求数据{'method_name': 'hi', 'method_args': [10], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:04 - 给客户端('172.27.16.234', 54568)的回复b'{"res": "hi 10, welcome"}'
+[INFO]2024-06-13 15:34:04 - info on handle: 客户端('172.27.16.234', 54568)关闭了连接
+[INFO]2024-06-13 15:34:04 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:34:07 - 与客户端('172.27.16.234', 54572)建立了连接
+[INFO]2024-06-13 15:34:07 - 来自客户端('172.27.16.234', 54572)的请求数据{'method_name': 'hi', 'method_args': [11], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:10 - 给客户端('172.27.16.234', 54572)的回复b'{"res": "hi 11, welcome"}'
+[INFO]2024-06-13 15:34:10 - info on handle: 客户端('172.27.16.234', 54572)关闭了连接
+[INFO]2024-06-13 15:34:13 - 与客户端('172.27.16.234', 54575)建立了连接
+[INFO]2024-06-13 15:34:13 - 来自客户端('172.27.16.234', 54575)的请求数据{'method_name': 'hi', 'method_args': [12], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:13 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:34:16 - 给客户端('172.27.16.234', 54575)的回复b'{"res": "hi 12, welcome"}'
+[INFO]2024-06-13 15:34:16 - info on handle: 客户端('172.27.16.234', 54575)关闭了连接
+[INFO]2024-06-13 15:34:19 - 与客户端('172.27.16.234', 54581)建立了连接
+[INFO]2024-06-13 15:34:19 - 来自客户端('172.27.16.234', 54581)的请求数据{'method_name': 'hi', 'method_args': [13], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:22 - 给客户端('172.27.16.234', 54581)的回复b'{"res": "hi 13, welcome"}'
+[INFO]2024-06-13 15:34:22 - info on handle: 客户端('172.27.16.234', 54581)关闭了连接
+[INFO]2024-06-13 15:34:22 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:34:25 - 与客户端('172.27.16.234', 54586)建立了连接
+[INFO]2024-06-13 15:34:25 - 来自客户端('172.27.16.234', 54586)的请求数据{'method_name': 'hi', 'method_args': [14], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:28 - 给客户端('172.27.16.234', 54586)的回复b'{"res": "hi 14, welcome"}'
+[INFO]2024-06-13 15:34:28 - info on handle: 客户端('172.27.16.234', 54586)关闭了连接
+[INFO]2024-06-13 15:34:31 - 与客户端('172.27.16.234', 54588)建立了连接
+[INFO]2024-06-13 15:34:31 - 来自客户端('172.27.16.234', 54588)的请求数据{'method_name': 'hi', 'method_args': [15], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:31 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:34:34 - 给客户端('172.27.16.234', 54588)的回复b'{"res": "hi 15, welcome"}'
+[INFO]2024-06-13 15:34:34 - info on handle: 客户端('172.27.16.234', 54588)关闭了连接
+[INFO]2024-06-13 15:34:37 - 与客户端('172.27.16.234', 54593)建立了连接
+[INFO]2024-06-13 15:34:37 - 来自客户端('172.27.16.234', 54593)的请求数据{'method_name': 'hi', 'method_args': [16], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:40 - 给客户端('172.27.16.234', 54593)的回复b'{"res": "hi 16, welcome"}'
+[INFO]2024-06-13 15:34:40 - info on handle: 客户端('172.27.16.234', 54593)关闭了连接
+[INFO]2024-06-13 15:34:40 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:34:43 - 与客户端('172.27.16.234', 54596)建立了连接
+[INFO]2024-06-13 15:34:43 - 来自客户端('172.27.16.234', 54596)的请求数据{'method_name': 'hi', 'method_args': [17], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:46 - 给客户端('172.27.16.234', 54596)的回复b'{"res": "hi 17, welcome"}'
+[INFO]2024-06-13 15:34:46 - info on handle: 客户端('172.27.16.234', 54596)关闭了连接
+[INFO]2024-06-13 15:34:49 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:34:55 - 与客户端('172.27.16.234', 54611)建立了连接
+[INFO]2024-06-13 15:34:55 - 来自客户端('172.27.16.234', 54611)的请求数据{'method_name': 'hi', 'method_args': [19], 'method_kwargs': {}}
+[INFO]2024-06-13 15:34:58 - 给客户端('172.27.16.234', 54611)的回复b'{"res": "hi 19, welcome"}'
+[INFO]2024-06-13 15:34:58 - info on handle: 客户端('172.27.16.234', 54611)关闭了连接
+[INFO]2024-06-13 15:34:58 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:35:07 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:35:16 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:35:19 - 与客户端('172.27.16.234', 54634)建立了连接
+[INFO]2024-06-13 15:35:19 - 来自客户端('172.27.16.234', 54634)的请求数据{'method_name': 'hi', 'method_args': [23], 'method_kwargs': {}}
+[INFO]2024-06-13 15:35:22 - 给客户端('172.27.16.234', 54634)的回复b'{"res": "hi 23, welcome"}'
+[INFO]2024-06-13 15:35:22 - info on handle: 客户端('172.27.16.234', 54634)关闭了连接
+[INFO]2024-06-13 15:35:25 - 与客户端('172.27.16.234', 54641)建立了连接
+[INFO]2024-06-13 15:35:25 - 来自客户端('172.27.16.234', 54641)的请求数据{'method_name': 'hi', 'method_args': [24], 'method_kwargs': {}}
+[INFO]2024-06-13 15:35:25 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:35:28 - 给客户端('172.27.16.234', 54641)的回复b'{"res": "hi 24, welcome"}'
+[INFO]2024-06-13 15:35:28 - info on handle: 客户端('172.27.16.234', 54641)关闭了连接
+[INFO]2024-06-13 15:35:34 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.27.16.234', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:35:35 - Received KeyboardInterrupt, stopping...
+[INFO]2024-06-13 15:35:35 - Server service stopped.

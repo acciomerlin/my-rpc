@@ -1,0 +1,298 @@
+[INFO]2024-06-13 17:30:11 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:11 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:11 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:14 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:14 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:14 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:17 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:17 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:17 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:21 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:21 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:21 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:30:23 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:30:24 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:24 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:24 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:27 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:27 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:27 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:30 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:30 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:30 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:33 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:33 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:33 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:30:35 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:30:36 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:36 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:36 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:39 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:39 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:39 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:42 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:42 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:42 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:46 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:46 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:46 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:30:47 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:30:49 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:49 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:49 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:52 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:52 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:52 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:55 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:55 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:55 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:30:58 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:30:58 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:30:58 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:30:59 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:31:01 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:01 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:01 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:04 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:04 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:04 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:07 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:07 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:07 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:11 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:11 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:11 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:31:11 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:31:14 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:14 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:14 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:17 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:17 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:17 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:20 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:20 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:20 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:23 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:23 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:23 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:31:23 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:31:26 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:26 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:26 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:29 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:29 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:29 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:32 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:32 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:32 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:31:35 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:31:36 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:36 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:36 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:39 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:39 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:39 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:42 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:42 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:42 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:45 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:45 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:45 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:31:47 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:31:48 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:48 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:48 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:51 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:51 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:51 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:54 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:54 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:54 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:31:57 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:31:57 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:31:57 - Connected to server: 172.17.27.110,8888
+[ERROR]2024-06-13 17:32:00 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:01 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:01 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:32:01 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:32:04 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:04 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[INFO]2024-06-13 17:32:04 - Connected to server: 172.17.27.110,8888
+[INFO]2024-06-13 17:32:07 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:07 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:09 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:09 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:09 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:11 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:11 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:11 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:12 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[ERROR]2024-06-13 17:32:13 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:13 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:13 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:15 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:15 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:15 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:17 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:18 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:18 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:20 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:20 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:20 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:22 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:22 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:22 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:24 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[ERROR]2024-06-13 17:32:24 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:24 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:24 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:26 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:26 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:26 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:28 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:28 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:28 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:30 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:30 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:30 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:32 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:32 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:32 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:34 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:35 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:35 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:36 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[ERROR]2024-06-13 17:32:37 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:37 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:37 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:39 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:39 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:39 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:41 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:41 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:41 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:43 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:43 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:43 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:45 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:45 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:45 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:47 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:47 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:47 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:48 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[ERROR]2024-06-13 17:32:49 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:50 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:50 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:52 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:52 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:52 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:54 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:54 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:54 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:56 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:56 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:56 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:32:58 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:32:58 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:32:58 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:00 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[ERROR]2024-06-13 17:33:00 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:00 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:00 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:02 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:02 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:02 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:04 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:05 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:05 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:07 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:07 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:07 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:09 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:09 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:09 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:11 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:11 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:11 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:12 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[ERROR]2024-06-13 17:33:13 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:13 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:13 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:15 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:15 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:15 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================
+[ERROR]2024-06-13 17:33:17 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+[INFO]2024-06-13 17:33:17 - Found servers: [('172.17.27.110', 8888)]
+[INFO]2024-06-13 17:33:17 - 选择的负载均衡算法：random; 最终选择的服务端为：('172.17.27.110', 8888)
+=================

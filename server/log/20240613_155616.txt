@@ -1,0 +1,36 @@
+[INFO]2024-06-13 15:56:16 - 读取注册中心配置：Registry IP&PORT: 172.17.27.110:9999
+[INFO]2024-06-13 15:56:16 - 注册方法：add
+[INFO]2024-06-13 15:56:16 - 注册方法：hi
+[INFO]2024-06-13 15:56:16 - From 0.0.0.0:8887 start listening...
+[INFO]2024-06-13 15:56:16 - SUCCESSFULLY REGISTER TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.27.110', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:56:25 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.27.110', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:56:34 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.27.110', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:56:43 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.27.110', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:56:44 - 与客户端('172.17.27.110', 55179)建立了连接
+[INFO]2024-06-13 15:56:44 - 来自客户端('172.17.27.110', 55179)的请求数据{'method_name': 'hi', 'method_args': [1], 'method_kwargs': {}}
+[INFO]2024-06-13 15:56:47 - 给客户端('172.17.27.110', 55179)的回复b'{"res": "hi 1, welcome"}'
+[INFO]2024-06-13 15:56:47 - info on handle: 客户端('172.17.27.110', 55179)关闭了连接
+[INFO]2024-06-13 15:56:50 - 与客户端('172.17.27.110', 55183)建立了连接
+[INFO]2024-06-13 15:56:50 - 来自客户端('172.17.27.110', 55183)的请求数据{'method_name': 'hi', 'method_args': [2], 'method_kwargs': {}}
+[INFO]2024-06-13 15:56:52 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.27.110', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:56:53 - 给客户端('172.17.27.110', 55183)的回复b'{"res": "hi 2, welcome"}'
+[INFO]2024-06-13 15:56:53 - info on handle: 客户端('172.17.27.110', 55183)关闭了连接
+[INFO]2024-06-13 15:56:56 - 与客户端('172.17.27.110', 55188)建立了连接
+[INFO]2024-06-13 15:56:56 - 来自客户端('172.17.27.110', 55188)的请求数据{'method_name': 'hi', 'method_args': [3], 'method_kwargs': {}}
+[INFO]2024-06-13 15:56:59 - 给客户端('172.17.27.110', 55188)的回复b'{"res": "hi 3, welcome"}'
+[INFO]2024-06-13 15:56:59 - info on handle: 客户端('172.17.27.110', 55188)关闭了连接
+[INFO]2024-06-13 15:57:01 - SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: 
+{'protocol': 'json', 'host': '172.17.27.110', 'port': 8887, 'status': True, 'parameters': {'ip_proto': 'ipv4'}}
+===================
+[INFO]2024-06-13 15:57:02 - Received KeyboardInterrupt, stopping...
+[INFO]2024-06-13 15:57:02 - Server service stopped.

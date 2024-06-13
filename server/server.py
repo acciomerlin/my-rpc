@@ -125,7 +125,8 @@ class RegistryClient:
         self.registry_port = registry_port
         self.servers_cache = []
         self.first_register = True
-        self.stop_event = None
+        self.strong_stop_event = None
+        self.weak_stop_event = threading.Event()
         self.logger = logger
         self.logger.info(f"读取注册中心配置：Registry IP&PORT: {registry_host}:{registry_port}")
 
@@ -183,14 +184,14 @@ class RegistryClient:
         conn.close()
 
     def register_send_heartbeat(self, host, port, stop_e):
-        self.stop_event = stop_e
-        while not self.stop_event.is_set():
+        self.strong_stop_event = stop_e
+        while not self.strong_stop_event.is_set() and not self.weak_stop_event.is_set():
             try:
                 self.register_to_registry(host, port)
                 time.sleep(9)
             except (TimeoutError, ConnectionRefusedError) as e:
-                self.logger.error(f'与注册中心建立HTTP连接时发生错误：{e}')
-                self.stop_event.set()
+                self.logger.error(f'与注册中心建立HTTP连接时发生错误，停止与注册中心联系：{e}')
+                self.weak_stop_event.set()
 
 
 class TCPServer:
@@ -261,8 +262,9 @@ class RPCServer(TCPServer):
         # 线程管理.....
         self.stop_event = threading.Event()
         super().__init__(host, port, self.logger, self.stop_event)
-        self._tcp_serve_thread = threading.Thread(target=self.loop_accept_client)
-        self._listen_stop_sig_thread = threading.Thread(target=self.loop_detect_stop_signal)
+        self.loop_detect_stop_signal_thread = threading.Thread(target=self.loop_detect_stop_signal)
+        self.tcp_serve_thread = threading.Thread(target=self.loop_accept_client)
+        self.register_and_send_hb_thread = threading.Thread(target=self.registry_client.register_send_heartbeat, args=(self.host, self.port, self.stop_event))
 
     def rpc_client_handler(self, client_sock, client_addr):
         try:
@@ -281,10 +283,12 @@ class RPCServer(TCPServer):
 
     def serve(self):
         self.logger.info(f"From {self.host}:{self.port} start listening...")
-        self._tcp_serve_thread.start()
-        self._listen_stop_sig_thread.start()
+        self.loop_detect_stop_signal_thread.start()
+        self.tcp_serve_thread.start()
+        self.register_and_send_hb_thread.start()
         try:
-            self.registry_client.register_send_heartbeat(self.host, self.port, self.stop_event)
+            while True:
+                time.sleep(100)
         except KeyboardInterrupt:
             self.stop_event.set()
             self.logger.info("Received KeyboardInterrupt, stopping...")

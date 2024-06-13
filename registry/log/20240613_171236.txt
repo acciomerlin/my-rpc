@@ -1,0 +1,14 @@
+[INFO] 2024-06-13 17:12:36 - Starting registry server on 172.17.27.110 port 9999
+[INFO] 2024-06-13 17:12:40 - Register instance=> InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=None, parameters={'ip_proto': 'ipv4'})
+
+[INFO] 2024-06-13 17:12:41 - 健康检测已在后台开启
+[INFO] 2024-06-13 17:12:41 - Health check==================>
+[INFO] 2024-06-13 17:12:41 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:12:40
+[INFO] 2024-06-13 17:12:46 - Health check==================>
+[INFO] 2024-06-13 17:12:46 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:12:40
+[INFO] 2024-06-13 17:12:49 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 17:12:49 - Its last registered time: 2024-06-13 17:12:40
+[INFO] 2024-06-13 17:12:49 - Updated its timestamp: 2024-06-13 17:12:49
+
+[INFO] 2024-06-13 17:12:51 - Main thread received KeyboardInterrupt, stopping...
+[INFO] 2024-06-13 17:12:51 - Registry service stopped.

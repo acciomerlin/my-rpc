@@ -1,0 +1,36 @@
+[INFO] 2024-06-13 17:29:34 - Starting registry server on 172.17.27.110 port 9999
+[INFO] 2024-06-13 17:29:39 - 健康检测已在后台开启
+[INFO] 2024-06-13 17:29:39 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 17:29:44 - Health check=> Instance list is empty
+
+[INFO] 2024-06-13 17:29:46 - Register instance=> InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=None, parameters={'ip_proto': 'ipv4'})
+
+[INFO] 2024-06-13 17:29:49 - Health check==================>
+[INFO] 2024-06-13 17:29:49 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:29:46
+[INFO] 2024-06-13 17:29:54 - Health check==================>
+[INFO] 2024-06-13 17:29:54 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:29:46
+[INFO] 2024-06-13 17:29:55 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 17:29:55 - Its last registered time: 2024-06-13 17:29:46
+[INFO] 2024-06-13 17:29:55 - Updated its timestamp: 2024-06-13 17:29:55
+
+[INFO] 2024-06-13 17:29:59 - Health check==================>
+[INFO] 2024-06-13 17:29:59 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:29:55
+[INFO] 2024-06-13 17:30:04 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 17:30:04 - Its last registered time: 2024-06-13 17:29:55
+[INFO] 2024-06-13 17:30:04 - Updated its timestamp: 2024-06-13 17:30:04
+
+[INFO] 2024-06-13 17:30:04 - Health check==================>
+[INFO] 2024-06-13 17:30:04 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:30:04
+[INFO] 2024-06-13 17:30:09 - Health check==================>
+[INFO] 2024-06-13 17:30:09 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:30:04
+[INFO] 2024-06-13 17:30:13 - Register already exists instance=> InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=None, parameters={'ip_proto': 'ipv4'})
+[INFO] 2024-06-13 17:30:13 - Its last registered time: 2024-06-13 17:30:04
+[INFO] 2024-06-13 17:30:13 - Updated its timestamp: 2024-06-13 17:30:13
+
+[INFO] 2024-06-13 17:30:14 - Health check==================>
+[INFO] 2024-06-13 17:30:14 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:30:13
+[INFO] 2024-06-13 17:30:19 - Health check==================>
+[INFO] 2024-06-13 17:30:19 - Instance InstanceMeta(protocol=json, host=172.17.27.110, port=8888, status=True, parameters={'ip_proto': 'ipv4'}) is healthy, last seen at 2024-06-13 17:30:13
+[INFO] 2024-06-13 17:30:20 - Main thread received KeyboardInterrupt, stopping...
+[INFO] 2024-06-13 17:30:20 - Registry service stopped.
