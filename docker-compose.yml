@@ -1,52 +1,48 @@
 version: '3.8'
+networks:
+  rpc_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
 
 services:
   registry:
-    build: ./registry
-    working_dir: /app/registry
-    volumes:
-      - .:/app
+    build: .
+    command: python registry/registry.py -p 9999
+    ports:
+      - "9999:9999"
     networks:
-      - rpc_network
-    command: python registry.py
+      rpc_network:
+        ipv4_address: 192.168.1.10
 
   server1:
-    build: ./server
-    working_dir: /app/server
-    volumes:
-      - .:/app
-    environment:
-      - REGISTRY_HOST=registry
-      - REGISTRY_PORT=8081
-    networks:
-      - rpc_network
+    build: .
+    command: python server/server.py -p 12345
+    ports:
+      - "12345:12345"
     depends_on:
       - registry
-    command: python server.py
+    networks:
+      rpc_network:
+        ipv4_address: 192.168.1.11
 
   server2:
-    build: ./server
-    environment:
-      - REGISTRY_HOST=registry
-      - REGISTRY_PORT=8081
-      - PYTHONPATH=/app
-    networks:
-      - rpc_network
+    build: .
+    command: python server/server.py -p 12346
+    ports:
+      - "12346:12346"
     depends_on:
       - registry
-    entrypoint: ["sh", "-c", "python3 server.py"]
-
-  client:
-    build: ./client
-    environment:
-      - REGISTRY_HOST=registry
-      - REGISTRY_PORT=8081
-      - PYTHONPATH=/app
     networks:
-      - rpc_network
-    depends_on:
-      - server1
-      - server2
+      rpc_network:
+        ipv4_address: 192.168.1.12
 
-networks:
-  rpc_network:
+  client1:
+    build: .
+    command: python client/client.py
+    depends_on:
+      - server2
+    networks:
+      rpc_network:
+        ipv4_address: 192.168.1.13

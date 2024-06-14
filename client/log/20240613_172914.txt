@@ -1,8 +1,0 @@
-[ERROR]2024-06-13 17:29:16 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
-[ERROR]2024-06-13 17:29:16 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
-[ERROR]2024-06-13 17:29:16 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: object of type 'NoneType' has no len()
-[ERROR]2024-06-13 17:29:18 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
-[ERROR]2024-06-13 17:29:18 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: object of type 'NoneType' has no len()
-[ERROR]2024-06-13 17:29:21 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。
-[ERROR]2024-06-13 17:29:21 - Error occurred when calling method hi: Failed to connect to server in connect_server_by_registry: object of type 'NoneType' has no len()
-[ERROR]2024-06-13 17:29:28 - 与注册中心建立HTTP连接时发生错误：[WinError 10061] 由于目标计算机积极拒绝，无法连接。

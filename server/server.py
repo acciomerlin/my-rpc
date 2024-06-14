@@ -66,15 +66,18 @@ class InstanceMeta:
 
 
 class Logger:
-    def __init__(self):
-        if not os.path.exists('./log'):
-            os.makedirs('./log')
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        self.log_filename = f'./log/{timestamp}.txt'
+    def __init__(self, save_log=False):
+        self.save = save_log
+        if self.save:
+            if not os.path.exists('./log'):
+                os.makedirs('./log')
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            self.log_filename = f'./log/{timestamp}.txt'
 
     def log(self, level, msg):
-        with open(self.log_filename, 'a') as log_file:
-            log_file.write(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
+        if self.save:
+            with open(self.log_filename, 'a') as log_file:
+                log_file.write(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
         print(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
 
     def info(self, msg):
@@ -117,8 +120,13 @@ class ServerStub:
 
 class RegistryClient:
     def __init__(self, logger):
+        self.logger = logger
         config = configparser.ConfigParser()
-        config.read('config.ini')
+        try:
+            config.read('config.ini')
+        except Exception as e:
+            self.logger.error(f"Error occurred in reading registry config:{e}")
+            exit(-1)
         registry_host = config['registry']['host']
         registry_port = int(config['registry']['port'])
         self.registry_host = registry_host
@@ -127,8 +135,8 @@ class RegistryClient:
         self.first_register = True
         self.strong_stop_event = None
         self.weak_stop_event = threading.Event()
-        self.logger = logger
-        self.logger.info(f"读取注册中心配置：Registry IP&PORT: {registry_host}:{registry_port}")
+        self.logger.info(f"成功从配置文件读取到注册中心ip地址: {registry_host}:{registry_port}"
+                         f"\n=========================================================================================")
 
     def register_to_registry(self, host, port):
         conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
@@ -147,18 +155,15 @@ class RegistryClient:
         if response.status == 200:
             response_data = json.loads(response.read().decode())
             if self.first_register:
-                self.logger.info(f"SUCCESSFULLY REGISTER TO THE REGISTRY: \n{response_data}\n===================")
+                self.logger.info(f"SUCCESSFULLY REGISTER TO REGISTRY: {response_data}")
                 self.first_register = False
             else:
-                self.logger.info(
-                    f"SUCCESSFULLY SEND HEARTBEAT TO THE REGISTRY: \n{response_data}\n===================")
+                self.logger.info(f"SEND ❤ TO REGISTRY")
         else:
             if self.first_register:
-                self.logger.error(
-                    f"FAIL TO REGISTER TO THE REGISTRY: \n{response.read().decode()}\n=================")
+                self.logger.error(f"FAIL TO REGISTER TO REGISTRY: {response.read().decode()}")
             else:
-                self.logger.error(
-                    f"FAIL TO SEND HEARTBEAT TO THE REGISTRY: \n{response.read().decode()}\n=================")
+                self.logger.error(f"FAIL TO SEND ❤ TO REGISTRY")
 
         conn.close()
 
@@ -166,7 +171,10 @@ class RegistryClient:
         conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
         headers = {'Content-type': 'application/json'}
 
-        instance = InstanceMeta("json", host, port)
+        if host == '0.0.0.0':
+            instance = InstanceMeta("json", socket.gethostbyname(socket.gethostname()), port)
+        else:
+            instance = InstanceMeta("json", host, port)
         instance_data = json.dumps(instance.to_dict())
 
         try:
@@ -174,12 +182,12 @@ class RegistryClient:
             response = conn.getresponse()
             if response.status == 200:
                 response_data = json.loads(response.read().decode())
-                self.logger.info(f"SUCCESSFULLY UNREGISTERED TO THE REGISTRY: \n{response_data}\n===================")
+                self.logger.info(f"SUCCESSFULLY UNREGISTERED TO REGISTRY: \n{response_data}")
             else:
                 self.logger.error(
-                    f"FAIL TO UNREGISTER TO THE REGISTRY: \n{response.read().decode()}\n=================")
+                    f"FAIL TO UNREGISTER TO REGISTRY: {response.read().decode()}")
         except (TimeoutError, ConnectionRefusedError) as e:
-            self.logger.error(f'与注册中心建立HTTP连接时发生错误：{e}')
+            self.logger.error(f'与注册中心通信时发生错误：{e}，停止与注册中心联系')
 
         conn.close()
 
@@ -190,7 +198,7 @@ class RegistryClient:
                 self.register_to_registry(host, port)
                 time.sleep(9)
             except (TimeoutError, ConnectionRefusedError) as e:
-                self.logger.error(f'与注册中心建立HTTP连接时发生错误，停止与注册中心联系：{e}')
+                self.logger.error(f'与注册中心通信时发生错误，停止与注册中心联系：{e}')
                 self.weak_stop_event.set()
 
 
@@ -264,7 +272,8 @@ class RPCServer(TCPServer):
         super().__init__(host, port, self.logger, self.stop_event)
         self.loop_detect_stop_signal_thread = threading.Thread(target=self.loop_detect_stop_signal)
         self.tcp_serve_thread = threading.Thread(target=self.loop_accept_client)
-        self.register_and_send_hb_thread = threading.Thread(target=self.registry_client.register_send_heartbeat, args=(self.host, self.port, self.stop_event))
+        self.register_and_send_hb_thread = threading.Thread(target=self.registry_client.register_send_heartbeat,
+                                                            args=(self.host, self.port, self.stop_event))
 
     def rpc_client_handler(self, client_sock, client_addr):
         try:
@@ -291,6 +300,7 @@ class RPCServer(TCPServer):
                 time.sleep(100)
         except KeyboardInterrupt:
             self.stop_event.set()
+            self.registry_client.unregister_from_registry(self.host, self.port)
             self.logger.info("Received KeyboardInterrupt, stopping...")
         finally:
             self.logger.info("Server service stopped.")

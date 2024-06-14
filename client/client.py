@@ -19,15 +19,18 @@ class LoadBalance:
 
 
 class Logger:
-    def __init__(self):
-        if not os.path.exists('./log'):
-            os.makedirs('./log')
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        self.log_filename = f'./log/{timestamp}.txt'
+    def __init__(self, save_log=False):
+        self.save = save_log
+        if self.save:
+            if not os.path.exists('./log'):
+                os.makedirs('./log')
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            self.log_filename = f'./log/{timestamp}.txt'
 
     def log(self, level, msg):
-        with open(self.log_filename, 'a') as log_file:
-            log_file.write(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
+        if self.save:
+            with open(self.log_filename, 'a') as log_file:
+                log_file.write(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
         print(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
 
     def info(self, msg):
@@ -42,14 +45,19 @@ class RegistryClient(object):
         self.logger = logger
         # 读取配置文件
         config = configparser.ConfigParser()
-        config.read('config.ini')
+        try:
+            config.read('config.ini')
+        except Exception as e:
+            self.logger.error(f"Error occurred in reading registry config:{e}")
+            exit(-1)
 
         registry_host = config['registry']['host']
         registry_port = int(config['registry']['port'])
         self.registry_host = registry_host
         self.registry_port = registry_port
         self.servers_cache = set()
-        print(f"注册中心IP ADDR: {registry_host}:{registry_port}\n=================")  # test
+        self.logger.info(f"成功从配置文件读取到注册中心ip地址: {registry_host}:{registry_port}"
+                         f"\n=========================================================================================")  # test
 
     def findRpcServers(self, protocol="json"):
         """
@@ -63,7 +71,7 @@ class RegistryClient(object):
             if response.status == 200:
                 data = response.read().decode()
                 servers_raw = json.loads(data)
-                print(f"成功从注册中心请求到目前可用的服务端列表：\n{servers_raw}\n=================")
+                # print(f"成功从注册中心请求到目前可用的服务端列表：\n{servers_raw}\n=================")
 
                 # 可以在这里加参数设置条件过滤一些server，比如要求param里必须含有一个特定字段
 
@@ -73,19 +81,20 @@ class RegistryClient(object):
                     tmp_server_set.add((ins['host'], ins['port']))
                 origin_set = self.servers_cache.copy()
                 self.servers_cache = self.servers_cache.union(tmp_server_set)
-                print(f'新获取到的服务端列表: {tmp_server_set}')
-                print(f'本地旧的服务端列表缓存: {origin_set}')
+                # print(f'新获取到的服务端列表: {tmp_server_set}')
+                # print(f'本地旧的服务端列表缓存: {origin_set}')
                 self.servers_cache -= origin_set - tmp_server_set
-                print(f'更新后的本地服务端缓存: {self.servers_cache}')
+                # print(f'更新后的本地服务端缓存: {self.servers_cache}')
 
                 servers = list(self.servers_cache)
-                print(f"交付给负载均衡的服务端元组列表：\n{servers}\n=================")
+                # print(f"交付给负载均衡的服务端元组列表：\n{servers}\n=================")
                 return servers  # eg: return [("127.0.0.1", 9999), ("127.0.0.1", 9998)]
             else:
                 # 与注册中心连接不成功，考虑使用cache
                 return []
         except (TimeoutError, ConnectionRefusedError) as e:
-            self.logger.error(f'与注册中心建立HTTP连接时发生错误：{e}')
+            self.logger.error(f'与注册中心通信时发生错误：{e}，停止与注册中心通信，')
+            return []
         finally:
             conn.close()
 
@@ -154,6 +163,7 @@ class RPCClient(TCPClient):
                 response = self.recv(1024)
                 result = json.loads(response.decode('utf-8'))
                 result = result["res"]
+                self.logger.info(f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result}")
             except (json.JSONDecodeError, ConnectionError) as e:
                 self.logger.error(f"Error occurred when calling method {method}: {e}")
                 result = None
@@ -177,34 +187,35 @@ class RPCClient(TCPClient):
 
     def connect_server_by_registry(self, protocol="json"):
         """服务发现，连接SERVER"""
+        # 调用rpc服务，开新sock
+        self.new_socket()
+        # 第一次用registry find servers,有缓存优先缓存，定期轮询以更新缓存
+        if len(self.registry_client.servers_cache) == 0:
+            servers = self.registry_client.findRpcServers(protocol)
+        else:
+            servers = list(self.registry_client.servers_cache)
+        if len(servers) == 0:
+            raise ConnectionError(f"No available servers")
+        # else:
+        #     self.logger.info(f'Found servers: {servers}')
+
+        # 负载均衡选server
+        server = LoadBalance.random(servers)
+        # self.logger.info(f"选择的负载均衡算法：random; 最终选择的服务端为：{server}")
+        host, port = server
         try:
-            # 调用rpc服务，开新sock
-            self.new_socket()
-
-            # 第一次用registry find servers,有缓存优先缓存，定期轮询以更新缓存
-            if len(self.registry_client.servers_cache) == 0:
-                servers = self.registry_client.findRpcServers(protocol)
-            else:
-                servers = list(self.registry_client.servers_cache)
-            if len(servers) == 0:
-                self.logger.info("No servers in registry now")
-            else:
-                self.logger.info(f'Found servers: {servers}')
-
-            # 负载均衡选server
-            server = LoadBalance.random(servers)
-            self.logger.info(f"选择的负载均衡算法：random; 最终选择的服务端为：{server}\n=================")
-            host, port = server
             self.connect(host, port)
             self.logger.info(f'Connected to server: {host},{port}')
-        except Exception as e:
-            raise ConnectionError(f"Failed to connect to server in connect_server_by_registry: {e}")
+        except Exception:
+            if server in self.registry_client.servers_cache:
+                self.registry_client.servers_cache.remove(server)
+            raise ConnectionError(f"Failed to connect to rpc server")
 
     def poll_registry(self):
         """轮询注册中心，更新本地服务器列表缓存"""
         while self.running:
             self.registry_client.findRpcServers()
-            time.sleep(10)
+            time.sleep(3)
 
     def stop(self):
         """停止客户端，关闭存在socket"""
@@ -227,14 +238,11 @@ if __name__ == '__main__':
         parser.error("在server模式下，必须指定host和port参数")
 
     client = RPCClient(host=args.host, port=args.port)
-    i = 0
     try:
-        while True:
-            time.sleep(0.1)
-            i += 1
-            print(client.hi(i))
-            if i > 100:
-                break
-    except Exception as e:
-        print(f"Exception occurred in main thread: {e}")
+        for i in range(1, 20):
+            client.hi(i)
+    except KeyboardInterrupt:
+        client.logger.info(f"Main thread received KeyboardInterrupt, stopping...")
+    finally:
+        client.stop()
         exit(0)

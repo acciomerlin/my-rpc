@@ -11,26 +11,26 @@ from typing import List
 from urllib.parse import urlparse, parse_qs
 
 
-class Log:
-    """运行日志"""
+class Logger:
+    def __init__(self, save_log=False):
+        self.save = save_log
+        if self.save:
+            if not os.path.exists('./log'):
+                os.makedirs('./log')
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            self.log_filename = f'./log/{timestamp}.txt'
 
-    def __init__(self):
-        if not os.path.exists('./log'):
-            os.makedirs('./log')
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        self.log_filename = f'./log/{timestamp}.txt'
+    def log(self, level, msg):
+        if self.save:
+            with open(self.log_filename, 'a') as log_file:
+                log_file.write(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
+        print(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
 
     def info(self, msg):
-        """普通消息日志"""
-        with open(self.log_filename, 'a') as log_file:
-            log_file.write(f'[INFO] {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
-        print(f'[INFO] {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
+        self.log('INFO', msg)
 
     def error(self, msg):
-        """错误消息日志"""
-        with open(self.log_filename, 'a') as log_file:
-            log_file.write(f'[ERROR] {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
-        print(f'[ERROR] {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
+        self.log('ERROR', msg)
 
 
 class InstanceMeta:
@@ -96,7 +96,7 @@ class InstanceMeta:
 class RegistryService:
     """注册中心服务类"""
 
-    def __init__(self, logger: Log):
+    def __init__(self, logger: Logger):
         self.proto2instances = defaultdict(list)  # 存不同序列化数据格式对应的服务实例
         self.ins2timestamp = defaultdict(int)  # 存各个服务实例的时间戳，用于心跳检测
         self.logger = logger  # 日志
@@ -262,7 +262,7 @@ if __name__ == '__main__':
     args = pars.parse_args()
 
     # 日志与注册中心服务实例创建
-    logger = Log()
+    logger = Logger()
     rs = RegistryService(logger)
 
     # 启动注册中心
