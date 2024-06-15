@@ -2,6 +2,7 @@ import argparse
 import configparser
 import http.client
 import json
+import math
 import os
 import socket
 import threading
@@ -314,9 +315,43 @@ def add(a, b, c=10):
     return a + b + c
 
 
+def subtract(a, b):
+    return a - b
+
+
+def multiply(a, b):
+    return a * b
+
+
+def divide(a, b):
+    if b == 0:
+        return "Division by zero error!"
+    return a / b
+
+
+def area_of_circle(radius):
+    return math.pi * radius ** 2
+
+
+def square(number):
+    return number ** 2
+
+
+def to_uppercase(string):
+    return string.upper()
+
+
+def reverse_string(string):
+    # string[::-1] 是Python中的切片操作，表示从头到尾以步长-1反向取值，即反转字符串。
+    return string[::-1]
+
+
 def hi(user):
-    time.sleep(3)
     return f"hi {user}, welcome"
+
+
+def hello(name):
+    return f"Hello, {name}!"
 
 
 if __name__ == '__main__':
