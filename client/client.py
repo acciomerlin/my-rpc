@@ -40,7 +40,7 @@ class Logger:
         self.log('ERROR', msg)
 
 
-class RegistryClient(object):
+class RegistryClient:
     def __init__(self, logger):
         self.logger = logger
         # 读取配置文件
@@ -99,7 +99,7 @@ class RegistryClient(object):
             conn.close()
 
 
-class TCPClient(object):
+class TCPClient:
     def __init__(self, host=None, port=None):
         self.sock = None
         self.host = host
