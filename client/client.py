@@ -42,17 +42,25 @@ class Logger:
 
 class RegistryClient:
     def __init__(self, logger):
+        """
+        成员变量解释
+        self.registry_host : string 配置文件中读入的注册中心的 IP
+        self.registry_port : int 配置文件中读入的注册中心的端口号
+        self.servers_cache = set() 本地缓存的服务端列表
+        :param logger: 运行日志
+        """
         self.logger = logger
         # 读取配置文件
         config = configparser.ConfigParser()
         try:
-            config.read('config.ini')
+            # config.read('config.ini')  # docker
+            config.read('../config.ini')  # local
+            registry_host = config['registry']['host']
+            registry_port = int(config['registry']['port'])
         except Exception as e:
             self.logger.error(f"Error occurred in reading registry config:{e}")
             exit(-1)
 
-        registry_host = config['registry']['host']
-        registry_port = int(config['registry']['port'])
         self.registry_host = registry_host
         self.registry_port = registry_port
         self.servers_cache = set()
@@ -93,7 +101,7 @@ class RegistryClient:
                 # 与注册中心连接不成功，考虑使用cache
                 return []
         except (TimeoutError, ConnectionRefusedError) as e:
-            self.logger.error(f'与注册中心通信时发生错误：{e}，停止与注册中心通信，')
+            self.logger.error(f'与注册中心通信时发生错误：{e}，获取最新服务端信息失败，使用本地缓存的服务端列表')
             return []
         finally:
             conn.close()
@@ -104,10 +112,6 @@ class TCPClient:
         self.sock = None
         self.host = host
         self.port = port
-
-    def new_socket(self):
-        """创建一个新的套接字对象"""
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self, host=None, port=None):
         """连接SERVER"""
@@ -177,9 +181,13 @@ class RPCClient(TCPClient):
     def connect_server_by_args(self):
         """服务发现，连接SERVER"""
         try:
-            # 调用rpc服务，开新sock
-            self.new_socket()
             host, port = self.host, self.port
+            # 调用rpc服务，根据host ip地址类型开新sock
+            if '.' in host:
+                addr_type = socket.AF_INET
+            else:
+                addr_type = socket.AF_INET6
+            self.sock = socket.socket(addr_type, socket.SOCK_STREAM)
             self.connect(host, port)
             self.logger.info(f'Connected to server: {host},{port}')
         except Exception as e:
@@ -187,8 +195,6 @@ class RPCClient(TCPClient):
 
     def connect_server_by_registry(self, protocol="json"):
         """服务发现，连接SERVER"""
-        # 调用rpc服务，开新sock
-        self.new_socket()
         # 第一次用registry find servers,有缓存优先缓存，定期轮询以更新缓存
         if len(self.registry_client.servers_cache) == 0:
             servers = self.registry_client.findRpcServers(protocol)
@@ -203,13 +209,21 @@ class RPCClient(TCPClient):
         server = LoadBalance.random(servers)
         # self.logger.info(f"选择的负载均衡算法：random; 最终选择的服务端为：{server}")
         host, port = server
+
+        # 调用rpc服务，根据host ip地址类型开新sock
+        if '.' in host:
+            addr_type = socket.AF_INET
+        else:
+            addr_type = socket.AF_INET6
+        self.sock = socket.socket(addr_type, socket.SOCK_STREAM)
+
         try:
             self.connect(host, port)
             self.logger.info(f'Connected to server: {host},{port}')
-        except Exception:
+        except Exception as e:
             if server in self.registry_client.servers_cache:
                 self.registry_client.servers_cache.remove(server)
-            raise ConnectionError(f"Failed to connect to rpc server")
+            raise ConnectionError(f"Failed to connect to rpc server, {e}")
 
     def poll_registry(self):
         """轮询注册中心，更新本地服务器列表缓存"""
@@ -240,6 +254,7 @@ if __name__ == '__main__':
     client = RPCClient(host=args.host, port=args.port)
     try:
         for i in range(1, 20):
+            time.sleep(3)
             client.hi(i)
     except KeyboardInterrupt:
         client.logger.info(f"Main thread received KeyboardInterrupt, stopping...")
