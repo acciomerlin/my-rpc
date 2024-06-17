@@ -76,64 +76,72 @@ E:\PYPROJECTS\RPC
 ```
 整个项目由配置文件、Docker相关文件、客户端、注册中心和服务端代码构成。
 
+### 2.2 消息序列化和反序列化方式与消息格式定义
+
+本项目使用 json 作为消息的序列化和反序列化方式，消息格式定义如下：
+
+- 请求方法调用的消息格式定义：
+
+```json
+{
+    "method_name": "请求方法名", 
+    "method_args": "请求方法参数", 
+    "method_kwargs": "请求方法关键字参数"
+}
+```
+
+- 响应方法调用的消息格式定义：
+
+```json
+{
+    "res": "方法调用结果"
+}
+```
+
 ### 2.2 rpc服务端的实现
 
-server.py用到的库：
+#### server.py用到的库：
+
 ```python
-import argparse
-import configparser
-import http.client
-import json
-import math
-import os
-import socket
-import threading
-import time
-from datetime import datetime
+import argparse           # 用于编写启动参数
+import configparser       # 用于读取配置文件
+import http.client        # 用于发送HTTP请求
+import inspect		      # 用于响应用户服务发现时提取存储函数的参数
+import json               # 用于处理JSON数据
+import math               # 用于数学运算，注册函数编写时用到
+import os                 # 用于操作系统相关的功能（如日志文件路径）
+import socket             # 用于TCP通信
+import threading          # 用于多线程处理
+import time               # 用于时间相关的操作
+from datetime import datetime  
 ```
-server.py代码结构：
+#### server.py代码结构：
 
 <img src="doc_png/server.png" alt="server" style="zoom: 67%;" />
 
 其中：
 
-- **InstanceMeta**: 与注册中心通信，注册与保活服务时约定的服务实例数据结构，传输自身使用的序列化协议(如json)、监听的ip与端口、注册状态与一携带额外信息的字典parameters，InstanceMeta初始化方法与打包服务实例数据的to_dic方法展示如下：
+- **InstanceMeta**: 与注册中心通信，注册与保活服务时约定的服务实例数据结构，序列化方式采用json：
 
-```python
-class InstanceMeta:
-    def __init__(self, protocol=None, host=None, port=None):
-        self.protocol = protocol
-        self.host = host
-        self.port = port
-        self.status = None
-        self.parameters = {}
-
-    def to_dict(self):
-        return {
-            'protocol': self.protocol,
-            'host': self.host,
-            'port': self.port,
-            'status': self.status,
-            'parameters': self.parameters
-        }
+```json
+{
+    "protocol": "json",  // 实例使用的序列化协议
+    "host": "192.168.1.1",  // 实例监听的 IP 地址
+    "port": 8080,  // 实例监听的端口号
+    "status": "true",  // 实例的注册状态
+    "parameters": {} // 额外信息的字典，用于存储自定义参数}
+}
 ```
 
-- **Logger**: 用于输出与存储日志信息，默认不存储仅输出，分为info与error两个级别，代码解释：：
+- **Logger**: 用于输出与存储日志信息，默认不存储仅输出，分为info与error两个级别。
 
-```python
-class Logger:
-    def __init__(self, save_log=False):
-        self.save = save_log
-		# ...
-```
-
-- **ServerStub**: 作为服务端代理，负责处理服务端方法的注册与对注册方法的调用请求，代码解释：：
+- **ServerStub**: 作为服务端代理，负责处理**服务注册**与**服务调用**，并支持客户端进行**服务发现**：
 
 ```python
 class ServerStub:
     def __init__(self, logger):
-        self.services = {}
-        self.logger = logger
+        self.services = {} # 存储注册的方法
+        self.logger = logger # 运行日志
 
     def register_services(self, method, name=None):
         """
@@ -154,32 +162,60 @@ class ServerStub:
         :param client_addr: 调用方的 ip 地址，运行日志记录需要
         :return: reply: 序列化后的调用结果信息（调用成功/调用不存在方法/调用方法参数错误/其余方法处理时发生错误）
         """
+
+        # 解码并解析请求数据
         req_data = json.loads(req.decode('utf-8'))
         self.logger.info(f"来自客户端{str(client_addr)}的请求数据{req_data}")
+
+        # 从请求数据中提取方法名、方法参数和方法关键字参数
         method_name = req_data['method_name']
         method_args = req_data['method_args']
         method_kwargs = req_data['method_kwargs']
+
         try:
-            res = self.services[method_name](*method_args, **method_kwargs)
+            # 响应服务发现
+            if method_name == 'all_your_methods':
+                # 返回所有注册的方法名和参数格式
+                res = []
+                for method_name, method in self.services.items():
+                    # 获取方法的签名
+                    sig = inspect.signature(method)
+                    params = sig.parameters
+                    # 构造方法信息字典，包括方法名、必需参数和可选参数
+                    method_info = {
+                        "method_name": method_name,
+                        "method_args": [param.name for param in params.values() if param.default == param.empty],
+                        "method_kwargs": {param.name: param.default for param in params.values() if
+                                          param.default != param.empty}
+                    }
+                    res.append(method_info)
+            else:
+                # 响应服务调用
+                res = self.services[method_name](*method_args, **method_kwargs)
         except KeyError:
+            # 方法名不存在的情况
             res = f"No service found for: {method_name}"
         except TypeError as e:
+            # 方法参数错误的情况
             res = f"Argument error: {e}"
         except Exception as e:
+            # 其他调用错误的情况
             res = f"Error calling method: {e}"
+
+        # 构造响应消息，记录日志并返回序列化后的响应消息
         reply_raw = {"res": res}
         reply = json.dumps(reply_raw).encode('utf-8')
         self.logger.info(f"给客户端{str(client_addr)}的回复{reply}")
         return reply
 ```
 
-- **RegistryClient**: 负责注册中心相关的功能，向注册中心注册、注销服务，并能定期向其发送心跳保持服务活性，代码解释：：
+- **RegistryClient**: 负责注册中心相关的功能，向注册中心注册、注销服务，并能定期向其发送心跳保持服务活性：
 
 ```python
 class RegistryClient:
     def __init__(self, logger):
         """
-        初始化成员信息
+        成员变量解释
         self.registry_host : string 配置文件中读入的注册中心的 IP
         self.registry_port : int 配置文件中读入的注册中心的端口号
         self.first_register : bool 区分服务端发送的是注册服务请求还是心跳请求
@@ -204,7 +240,7 @@ class RegistryClient:
         else:
             instance = InstanceMeta("json", host, port)
 
-        instance.add_parameters({'ip_proto': 'ipv4'})
+        instance.add_parameters({'mode': 'development'})  # 加额外控制信息例子
         instance_data = json.dumps(instance.to_dict())
 
         conn.request("POST", "/myRegistry/register?proto=json", instance_data, headers)
@@ -273,10 +309,9 @@ class RegistryClient:
                 
 ```
 
-- **TCPServer**: 负责TCP连接相关功能，监听、并发处理客户端请求，并能够在收到停止信号时优雅关闭，代码解释：
+- **TCPServer**: 负责TCP连接相关功能，监听、并发处理客户端请求，并能够在收到停止信号时优雅关闭：
 
 ```python
-# TCPServer: 负责处理TCP连接，监听客户端请求，并能够在收到停止信号时优雅关闭
 class TCPServer:
     def __init__(self, host, port, logger, stop_event):
         self.port = port # 服务器监听的IP地址
@@ -299,7 +334,7 @@ class TCPServer:
         self.sock = socket.socket(self.addr_type, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
-        self.sock.listen(10)
+        self.sock.listen(10) # 要求至少可以支持并发处理 10 个客户端的请求
 
     def send_tcp_server_stop_signal(self):
         """
@@ -357,7 +392,7 @@ class TCPServer:
 
 ```
 
-- **RPCServer**: 继承自**TCPServer**，并结合**Logger**、**ServerStub**和**RegistryClient**实现了完整的RPC服务功能，代码解释：
+- **RPCServer**: 继承自**TCPServer**，并结合**Logger**、**ServerStub**和**RegistryClient**实现了完整的RPC服务功能：
 
 ```python
 class RPCServer(TCPServer):
@@ -407,10 +442,14 @@ class RPCServer(TCPServer):
             while True:
                 time.sleep(100)
         except KeyboardInterrupt:
-            self.stop_event.set()
-            self.registry_client.unregister_from_registry(self.host, self.port)
             self.logger.info("Received KeyboardInterrupt, stopping...")
+            self.registry_client.unregister_from_registry(self.host, self.port)
+            self.stop_event.set()
         finally:
+            self.logger.info("Waiting for other threads to join...")
+            self.register_and_send_hb_thread.join(3)
+            self.loop_detect_stop_signal_thread.join(3)
+            self.tcp_serve_thread.join(3)
             self.logger.info("Server service stopped.")
             exit(0)
 ```
@@ -426,83 +465,441 @@ def add(a, b, c=10):
 
 ### 2.3 rpc客户端的实现
 
-client.py用到的库：
-```python
-import argparse
-import configparser
-import http.client
-import json
-import os
-import socket
-import random
-import threading
-import time
-from datetime import datetime
-```
-server.py代码结构：
+本项目rpc客户端分成已知服务端地址，直接与服务端通信调用服务模式与通过注册中心发现服务端调用服务模式，后者在服务发现时需先通过注册中心发现服务端。
 
-<img src="doc_png/server.png" alt="server" style="zoom: 67%;" />
+#### client.py用到的库：
+
+```python
+import argparse           # 用于编写参数
+import configparser       # 用于读取配置文件
+import http.client        # 用于发送HTTP请求
+import json               # 用于处理JSON数据
+import os                 # 用于操作系统相关的功能（如日志文件路径）
+import socket             # 用于TCP通信
+import random             # 用于随机选择负载均衡服务器
+import threading          # 用于多线程处理
+import time               # 用于时间相关的操作
+from datetime import datetime  
+```
+#### client.py代码结构：
+
+<img src="doc_png/c_struct.png" alt="client" style="zoom: 67%;" />
 
 其中：
+
+- **LoadBalance**:  负载均衡类，以静态方法方式提供负载均衡算法，本项目暂时只实现了随机负载均衡算法 `random` ，后续可继续拓展：
+
+```python
+class LoadBalance:
+    @staticmethod
+    def random(servers):
+        s = random.choice(servers)
+        return s
+```
+
+- **Logger**: 用于输出与存储日志信息，默认不存储仅输出，分为info与error两个级别，与server.py一致。
+- **RegistryClient**: 负责与注册中心通信，能向注册中心请求**服务发现**获取可用的服务端列表并存至本地缓存的服务端列表：
+
+```python
+class RegistryClient:
+    def __init__(self, logger):
+        """
+        成员变量解释
+        self.registry_host : string 配置文件中读入的注册中心的 IP
+        self.registry_port : int 配置文件中读入的注册中心的端口号
+        self.servers_cache = set() 本地缓存的服务端列表
+        :param logger: 运行日志
+        """
+
+    def findRpcServers(self, protocol="json"):
+        """
+        http与注册中心通信，查询参数protocol为客户端使用的消息数据格式，默认为json，
+        本项目只实现了json的，后续可拓展，
+        返回发现的服务的 (host, port) 的元组 list
+        :return: tuple list
+        """
+        conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
+        try:
+            conn.request("GET", f"/myRegistry/findAllInstances?proto={protocol}")
+            response = conn.getresponse()
+            if response.status == 200:
+                data = response.read().decode()
+                servers_raw = json.loads(data)
+                tmp_server_set = set()
+                for ins in servers_raw:
+                    tmp_server_set.add((ins['host'], ins['port']))
+                origin_set = self.servers_cache.copy()
+                self.servers_cache = self.servers_cache.union(tmp_server_set)
+                self.servers_cache -= origin_set - tmp_server_set
+                servers = list(self.servers_cache)
+                return servers
+            else:
+                return []
+        except (TimeoutError, ConnectionRefusedError) as e:
+            self.logger.error(f'与注册中心通信时发生错误：{e}，获取最新服务端信息失败，使用本地缓存的服务端列表')
+            return []
+        finally:
+            conn.close()
+```
+
+- **TCPClient**: 基础的 TCP 客户端，封装了TCP通信socket的一些功能便于RPCClient的编写:
+
+```python
+class TCPClient:
+    def __init__(self, host=None, port=None):
+        """
+        分成通过注册中心发现服务与直接与服务端相连两种，
+        前者self.host, self.port会在每次从注册中心发现服务，负载均衡算法执行后被指定
+        后者需自身指定服务端ip与端口号
+        """
+        self.sock = None
+        self.host = host
+        self.port = port
+
+    def connect(self, host=None, port=None):
+        """
+        连接SERVER，分成通过注册中心发现服务与直接与服务端相连两种，
+        后者需自身指定服务端ip与端口号
+        """
+        if host is None and port is None:
+            self.sock.connect((self.host, self.port))
+        else:
+            self.sock.connect((host, port))
+
+    def send(self, data):
+        """发送数据到SERVER"""
+        self.sock.send(data)
+
+    def recv(self, length):
+        """接收SERVER回传的数据"""
+        return self.sock.recv(length)
+
+    def close(self):
+        """关闭连接"""
+        self.sock.close()
+```
+
+- **RPCClient**: 继承自 **TCPClient**，实现了 RPC 客户端的功能，分成两种模式，使用注册中心进行服务发现然后调用，与不使用注册中心直接与服务端连接进行服务调用：
+
+```python
+class RPCClient(TCPClient):
+    def __init__(self, host=None, port=None):
+        """
+        初始化作用：
+        根据是否提供 RPCServer host和port判断是否使用注册中心
+        如果使用注册中心，启动一个线程定期轮询注册中心。
+        self.logger: Logger 运行日志
+        self.running: bool 运行状态标志，用于停止可能的轮询注册中心线程
+        self.mode： 0（no registry) / 1(with registry)
+        """
+    def poll_registry(self):
+        """轮询注册中心，定期从注册中心获取最新的服务器列表更新缓存"""
+        while self.running:
+            self.registry_client.findRpcServers()
+            time.sleep(3)
+
+    def stop(self):
+        """停止客户端并关闭现有的socket连接"""
+        self.running = False
+        if self.sock:
+            self.close()
+        
+    def connect_server_by_args(self):
+        """
+        服务发现，直接连接服务器
+        根据host的格式确定使用IPv4还是IPv6
+        """
+        try:
+            host, port = self.host, self.port
+            # 调用rpc服务，根据host ip地址类型开新sock
+            if '.' in host:
+                addr_type = socket.AF_INET
+            else:
+                addr_type = socket.AF_INET6
+            self.connect(host, port)
+            self.logger.info(f'Connected to server: {host},{port}')
+        except Exception as e:
+            raise ConnectionError(f"Failed to connect to server in connect_server_by_args: {e}")
+
+    def connect_server_by_registry(self, protocol="json"):
+        """
+        服务发现，通过注册中心连接服务器
+        从注册中心获取可用服务器列表，如果有缓存则优先使用缓存，
+        使用负载均衡算法选择一个服务器进行连接，
+        根据host的格式确定使用IPv4还是IPv6
+        """
+        if len(self.registry_client.servers_cache) == 0:
+            servers = self.registry_client.findRpcServers(protocol)
+        else:
+            servers = list(self.registry_client.servers_cache)
+        if len(servers) == 0:
+            raise ConnectionError(f"No available servers")
+        server = LoadBalance.random(servers)
+        host, port = server
+     
+        # 调用rpc服务，根据host ip地址类型开新sock
+        if '.' in host:
+            addr_type = socket.AF_INET
+        else:
+            addr_type = socket.AF_INET6
+        self.sock = socket.socket(addr_type, socket.SOCK_STREAM)
+        
+        try:
+            self.connect(host, port)
+            self.logger.info(f'Connected to server: {host},{port}')
+        except Exception:
+            if server in self.registry_client.servers_cache:
+                self.registry_client.servers_cache.remove(server)
+            raise ConnectionError(f"Failed to connect to rpc server")
+
+    def __getattr__(self, method):
+        """
+        访问不存在属性时被调用的方法，动态创建一个代理函数_func，用于处理该方法调用,从而实现RPC远程调用；
+        
+        为实现用户在Client端能直接调用Server端方法，利用__getattr__构建了_func方法，
+        并将其通过setattr方法设置到RPCClient类中，使该类有Server端方法对应的映射,
+        如 RPCClient调用add方法，即调用了对应的_func方法，将数据发送至Server端并返回远程调用返回的数据
+        :param method: 试图访问的不存在的属性名
+        :return: _func: 远程调用method后返回调用结果的函数
+        """
+
+        def _func(*args, **kwargs):
+            """
+            代理函数，用于调用Server端的方法；
+            连接服务器，发送方法调用请求，并处理响应
+
+            :param args: 远程调用位置参数
+            :param kwargs: 远程调用关键字参数
+            :return: 远程调用的结果
+            """
+            try:
+                if self.mode == 0:
+                    self.connect_server_by_args()
+                else:
+                    self.connect_server_by_registry()
+                dic = {'method_name': method, 'method_args': args, 'method_kwargs': kwargs}
+                self.send(json.dumps(dic).encode('utf-8'))
+                response = self.recv(1024)
+                result = json.loads(response.decode('utf-8'))
+                result = result["res"]
+                self.logger.info(f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result}")
+            except (json.JSONDecodeError, ConnectionError) as e:
+                self.logger.error(f"Error occurred when calling method {method}: {e}")
+                result = None
+            finally:
+                self.close()
+            return result
+
+        setattr(self, method, _func)
+        return _func
+```
 
 ### 2.4 rpc注册中心的实现
 
-server.py用到的库：
-```python
-import argparse
-import configparser
-import http.client
-import json
-import math
-import os
-import socket
-import threading
-import time
-from datetime import datetime
-```
-server.py代码结构：
+#### registry.py用到的库：
 
-<img src="doc_png/server.png" alt="server" style="zoom: 67%;" />
+```python
+import argparse 
+import json  
+import os 
+import socket  
+import threading  
+import time  
+from collections import defaultdict  # 用于创建默认字典，存储不同协议的服务实例和实例时间戳
+from datetime import datetime 
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler  # 用于创建多线程HTTP服务器和处理HTTP请求
+from typing import List  # 用于类型注解，指定函数返回值为列表类型
+from urllib.parse import urlparse, parse_qs  # 用于处理请求时解析URL路径和查询字符串参数
+```
+
+#### registry.py代码结构：
+
+<img src="doc_png/r_struct.png" alt="registry" style="zoom: 67%;" />
 
 其中：
 
+- **Logger**: 用于输出与存储日志信息，默认不存储仅输出，分为info与error两个级别，与server.py一致。
+- **InstanceMeta**: 规定的服务实例数据结构，服务端进行服务注册注销时需要遵循此结构进行注册：
+
+```python
+class InstanceMeta:
+    """服务实例注册与发现使用的数据结构"""
+
+    def __init__(self, protocol=None, host=None, port=None):
+        self.protocol = protocol  # 服务使用的序列化与反序列化的消息格式，如json
+        self.host = host  # 服务注册的ip地址
+        self.port = port  # 服务注册的端口号
+        self.status = None  # 服务注册状态，注销False，已注册状态True
+        self.parameters = {}  # 服务注册时附加参数，扩展可在参数上设条件细化对服务实例的管理
+	"""一些工具函数，于文档略..."""
+```
+
+- **RegistryService**: 负责处理服务的注册、注销、和健康检测：
+
+```python
+class RegistryService:
+    """注册中心服务类"""
+
+    def __init__(self, logger: Logger):
+        self.proto2instances = defaultdict(list)  # 存不同序列化数据格式对应的服务实例
+        self.ins2timestamp = defaultdict(int)  # 存各个服务实例的时间戳，用于心跳检测
+        self.logger = logger  # 日志
+        self._stop_event = threading.Event()
+        self._health_thread = threading.Thread(target=self.loop_check_health)  # 心跳检测线程
+        self._health_thread.start()
+
+    def register(self, ins: InstanceMeta) -> InstanceMeta:
+        """处理服务实例注册"""
+        proto = ins.protocol
+        if ins in self.proto2instances[proto]:
+            self.logger.info(f"Register already exists instance=> {ins}")
+            ins.set_status(True)
+            old_time = self.ins2timestamp[ins]
+            self.logger.info(f"Its last registered time: {datetime.fromtimestamp(old_time).strftime('%Y-%m-%d %H:%M:%S')}")
+            self.ins2timestamp[ins] = int(time.time())
+            new_time = self.ins2timestamp[ins]
+            self.logger.info(f"Updated its timestamp: {datetime.fromtimestamp(new_time).strftime('%Y-%m-%d %H:%M:%S')}\n")
+            return ins
+        self.logger.info(f"Register instance=> {ins}\n")
+        ins.set_status(True)
+        self.proto2instances[proto].append(ins)
+        self.ins2timestamp[ins] = int(time.time())
+        return ins
+
+    def unregister(self, ins: InstanceMeta) -> InstanceMeta:
+        """处理服务实例注销"""
+        proto = ins.protocol
+        if ins not in self.proto2instances[proto]:
+            self.logger.info(f"Unregister an instance not found=> {ins}\n")
+            ins.set_status(False)
+            return ins
+        self.logger.info(f"Unregister instance=> {ins}\n")
+        self.proto2instances[proto].remove(ins)
+        del self.ins2timestamp[ins]
+        ins.set_status(False)
+        return ins
+
+    def find_instances_by_protocol(self, protocol="json") -> List[InstanceMeta]:
+        """根据序列化消息格式返回对应服务实例"""
+        return self.proto2instances[protocol]
+
+    def handle_check_health(self):
+        """对服务实例进行健康检测"""
+        cur_time = int(time.time())
+        threshold = 10
+        if not self.ins2timestamp:
+            self.logger.info('Health check=> Instance list is empty\n')
+        else:
+            self.logger.info('Health check==================>')
+            for ins, timestamp in list(self.ins2timestamp.items()):
+                if cur_time - timestamp > threshold:
+                    self.logger.info(
+                        f"!!!Instance {ins} is unhealthy, last seen at {datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')}")
+                    self.unregister(ins)
+                else:
+                    self.logger.info(
+                        f"Instance {ins} is healthy, last seen at {datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')}")
+
+    def stop(self):
+        """停止心跳检测线程"""
+        self._stop_event.set()  # 设置停止事件
+        self._health_thread.join()  # 等待线程结束
+
+    def loop_check_health(self):
+        """定期健康检测，循环"""
+        time.sleep(5)
+        self.logger.info("健康检测已在后台开启")
+        while not self._stop_event.is_set():
+            self.handle_check_health()
+            self._stop_event.wait(5)  # 等待5秒或直到事件被设置
+```
+
+- **RequestHandler**: 继承于**BaseHTTPRequestHandler**，负责处理HTTP请求，并根据不同的路径执行相应的注册中心功能：
+
+```python
+class RequestHandler(BaseHTTPRequestHandler):
+    """注册中心路由类"""
+
+    def __init__(self, *args, **kwargs):
+        self.registry_service = kwargs.pop('registry_service')  # 处理服务
+        self.logger = kwargs.pop('logger')  # 日志
+        super().__init__(*args, **kwargs)  # 父类默认初始化
+
+    def do_POST(self):
+        parsed_path = urlparse(self.path)
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        body = json.loads(post_data)
+
+        if parsed_path.path == '/myRegistry/register':
+            self.handle_register(body)
+        elif parsed_path.path == '/myRegistry/unregister':
+            self.handle_unregister(body)
+        else:
+            self.handle_404()
+
+    def do_GET(self):
+        parsed_path = urlparse(self.path)
+        query_params = parse_qs(parsed_path.query)
+
+        if parsed_path.path == '/myRegistry/findAllInstances':
+            self.handle_find_all_instances(query_params)
+        else:
+            self.handle_404()
+
+    def handle_register(self, body):
+        """服务注册路由"""
+        instance_meta = InstanceMeta.from_dict(body)  # 获取注册实例
+        registered_instance = self.registry_service.register(instance_meta)  # 处理注册服务
+        self.respond(registered_instance.to_dict())  # 返回注册好的实例
+
+    def handle_unregister(self, body):
+        """服务注销路由"""
+        instance_meta = InstanceMeta.from_dict(body)
+        unregistered_instance = self.registry_service.unregister(instance_meta)
+        self.respond(unregistered_instance.to_dict())
+
+    def handle_find_all_instances(self, query_params):
+        """服务发现路由，根据序列化数据格式请求"""
+        protocol = query_params.get('proto', [None])[0]
+        instances = self.registry_service.find_instances_by_protocol(protocol)
+        self.respond([instance.to_dict() for instance in instances])
+
+    def handle_404(self):
+        """无效路由处理"""
+        self.send_response(404)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        response = json.dumps({'error': 'Not Found'}).encode('utf-8')
+        self.wfile.write(response)
+
+    def respond(self, data):
+        """respond函数"""
+        response = json.dumps(data).encode('utf-8')
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(response)
+```
+
+- **run(...)**: 启动注册中心HTTP服务器：
+
+```python
+def run(server_class=ThreadingHTTPServer, handler_class=RequestHandler, host='0.0.0.0', port=8081,
+        registry_service=None, logger=None):
+    """
+    启动注册中心
+
+    :param server_class: HTTP服务器类，默认为ThreadingHTTPServer，用于处理并发请求
+    :param handler_class: 请求处理类，默认为RequestHandler，定义了注册中心各路由的处理方法
+    :param host: 注册中心监听的IP地址，默认为'0.0.0.0'，即监听所有可用的网络接口
+    :param port: 注册中心监听的端口号，默认为8081
+    :param registry_service: 注册中心服务实例，用于管理注册和注销的服务实例
+    :param logger: 日志记录实例，用于记录服务器运行状态和事件
+    :return: None
+    """
+```
 ## 三、功能实现解释
-
-### 3.1 消息格式定义，消息序列化和反序列化
-
-消息的格式，以及其序列化和反序列化方式可以自行定义，具体可以**参考之**
-
-**前我们处理 tcp 粘包的过程**，另外消息的序列化和反序列化方式也可以使用其
-
-他主流的序列化方式，如 json、xml 和 protobuf 等方式。
-
-### 3.2 服务注册
-
-RPC 服务端启动时需要注册其能支持的函数。我们要求服务端**至少能同时支**
-
-**持注册 10 个以上的函数**。
-
-如果你的设计中包括 “服务注册中心”，请通过它进行服务的注册。
-
-### 3.3 服务发现
-
-RPC 服务器需要为客户端提供接口，这样客户端才能知道服务端是否支持其
-
-希望调用的服务。
-
-如果你的设计中包括 “服务注册中心”，请通过它进行服务的发现。
-
-### 3.4 服务调用
-
-在 RPC 客户端发现服务后，根据你所设置的 RPC 协议正确地调用远程服
-
-务。服务调用的输入和输出的数据格式即在 3.1 你定义的格式。
-
-### 3.5 服务注册中心
-
-可以支持多个服务端把自己的服务注册到服务注册中心，客户端向服务注册
-
-中心询问服务端的地址并调用。
 
 ### 3.6 支持并发
 
@@ -544,28 +941,46 @@ RPC 框架需要具备进行异常处理以及超时处理的能力。其中，�
 
  调用映射服务的方法时，处理数据导致的异常/超时
 
-### **3.8 负载均衡（可选，加分项）**
-
-为了减少服务端的负载，服务端肯定不能只有一个，客户端可以通过服务注
-
-册中心选择服务器。因此，负载均衡功能就是把每个请求平均负载到每个服务器
-
-上，充分利用每个服务器的资源。
-
-注：考虑成本原因，不同的服务器可以使用多个虚拟机或 docker 镜像，但
-
-不能是单机多线程或多进程
 
 ## 四、运行教程
 
-以下是各模块的启动参数说明：
+### 服务端启动参数
 
- 服务端启动参数
+以下是服务端启动参数的说明：
 
-客户端启动参数
+- `-l`, `--host`: 服务端监听的 IP 地址，支持 IPv4 和 IPv6，默认值为 `0.0.0.0`，即监听所有 IP 地址。
+- `-p`, `--port`: 服务端监听的端口号，此参数为必填项。
 
-注册中心启动参数
+示例命令：
+```bash
+python server.py -p 8089
+```
 
+### 客户端启动参数
+
+以下是客户端启动参数的说明：
+
+- `-i`, `--host`: 客户端需要发送的服务端 IP 地址，支持 IPv4 和 IPv6，此参数在 `server` 模式下为必填项。
+- `-p`, `--port`: 客户端需要发送的服务端端口，此参数在 `server` 模式下为必填项。
+- `-m`, `--mode`: 客户端运行模式，默认值为 `server`，可选值为 `registry` (通过注册中心发现服务)和 `server`(直接与服务端相连)。在 `registry` 模式下，无需指定 `host` 和 `port` 参数。
+
+示例命令：
+```bash
+python client.py
+python client.py -i 127.0.0.1 -p 8089 -m server
+```
+
+### 注册中心启动参数
+
+以下是注册中心启动参数的说明：
+
+- `-l`, `--host`: 注册中心监听的 IP 地址，支持 IPv4 和 IPv6，默认值为 `0.0.0.0`，即监听所有 IP 地址。
+- `-p`, `--port`: 注册中心监听的端口号，此参数为必填项。
+
+示例命令：
+```bash
+python registry.py -p 9999
+```
 
 
 ## 五、运行测试

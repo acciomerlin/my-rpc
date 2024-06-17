@@ -178,11 +178,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.logger = kwargs.pop('logger')  # 日志
         super().__init__(*args, **kwargs)  # 父类默认初始化
 
-    def log_message(self, format, *args):
-        """重写log_message，将日志写到self.logger"""
-        # self.logger.info("%s - %s\n" %(self.client_address[0], format % args))
-        pass
-
     def do_POST(self):
         parsed_path = urlparse(self.path)
         content_length = int(self.headers['Content-Length'])
@@ -190,25 +185,46 @@ class RequestHandler(BaseHTTPRequestHandler):
         body = json.loads(post_data)
 
         if parsed_path.path == '/myRegistry/register':
-            """服务注册路由"""
-            instance_meta = InstanceMeta.from_dict(body)  # 获取注册实例
-
-            registered_instance = self.registry_service.register(instance_meta)  # 处理注册服务
-            self.respond(registered_instance.to_dict())  # 返回注册好的实例
+            self.handle_register(body)
         elif parsed_path.path == '/myRegistry/unregister':
-            """服务注销路由"""
-            instance_meta = InstanceMeta.from_dict(body)
-            unregistered_instance = self.registry_service.unregister(instance_meta)
-            self.respond(unregistered_instance.to_dict())
+            self.handle_unregister(body)
+        else:
+            self.handle_404()
 
     def do_GET(self):
         parsed_path = urlparse(self.path)
         query_params = parse_qs(parsed_path.query)
+
         if parsed_path.path == '/myRegistry/findAllInstances':
-            """服务发现路由，根据序列化数据格式请求"""
-            protocol = query_params.get('proto', [None])[0]
-            instances = self.registry_service.find_instances_by_protocol(protocol)
-            self.respond([instance.to_dict() for instance in instances])
+            self.handle_find_all_instances(query_params)
+        else:
+            self.handle_404()
+
+    def handle_register(self, body):
+        """服务注册路由"""
+        instance_meta = InstanceMeta.from_dict(body)  # 获取注册实例
+        registered_instance = self.registry_service.register(instance_meta)  # 处理注册服务
+        self.respond(registered_instance.to_dict())  # 返回注册好的实例
+
+    def handle_unregister(self, body):
+        """服务注销路由"""
+        instance_meta = InstanceMeta.from_dict(body)
+        unregistered_instance = self.registry_service.unregister(instance_meta)
+        self.respond(unregistered_instance.to_dict())
+
+    def handle_find_all_instances(self, query_params):
+        """服务发现路由，根据序列化数据格式请求"""
+        protocol = query_params.get('proto', [None])[0]
+        instances = self.registry_service.find_instances_by_protocol(protocol)
+        self.respond([instance.to_dict() for instance in instances])
+
+    def handle_404(self):
+        """无效路由处理"""
+        self.send_response(404)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        response = json.dumps({'error': 'Not Found'}).encode('utf-8')
+        self.wfile.write(response)
 
     def respond(self, data):
         """respond函数"""
@@ -222,34 +238,53 @@ class RequestHandler(BaseHTTPRequestHandler):
 def run(server_class=ThreadingHTTPServer, handler_class=RequestHandler, host='0.0.0.0', port=8081,
         registry_service=None,
         logger=None):
+    """
+    启动注册中心HTTP服务器
+
+    :param server_class: HTTP服务器类，默认为ThreadingHTTPServer，用于处理并发请求
+    :param handler_class: 请求处理类，默认为RequestHandler，定义了各路由的处理方法
+    :param host: 服务器监听的IP地址，默认为'0.0.0.0'，即监听所有可用的网络接口
+    :param port: 服务器监听的端口号，默认为8081
+    :param registry_service: 注册中心服务实例，用于管理注册和注销的服务实例
+    :param logger: 日志记录器实例，用于记录服务器运行状态和事件
+    :return: 无返回值
+    """
+    # 设置地址协议类型（IPv4 或 IPv6）
     if ':' in host:
         server_class.address_family = socket.AF_INET6
     else:
         server_class.address_family = socket.AF_INET
 
+    # 定义服务器地址
     server_address = (host, port)
+    # 创建HTTP服务器实例
     httpd = server_class(server_address,
-                         lambda *args,
-                                **kwargs: handler_class(*args,
-                                                        registry_service=registry_service,
-                                                        logger=logger,
-                                                        **kwargs))
+                         lambda *args, **kwargs: handler_class(*args,
+                                                               registry_service=registry_service,
+                                                               logger=logger,
+                                                               **kwargs))
 
+    # 获取服务器IP地址
     if host == '0.0.0.0':
         hostname = socket.gethostname()
         ip_addr = socket.gethostbyname(hostname)
     else:
         ip_addr = host
 
+    # 记录服务器启动信息
     logger.info(f'Starting registry server on {ip_addr} port {port}')
     try:
+        # 启动服务器，进入永远运行状态
         httpd.serve_forever()
     except KeyboardInterrupt:
+        # 处理键盘中断（Ctrl+C）
         logger.info("Main thread received KeyboardInterrupt, stopping...")
     finally:
+        # 停止注册中心服务
         registry_service.stop()
         logger.info("Registry service stopped.")
         exit(-1)
+
 
 
 if __name__ == '__main__':

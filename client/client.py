@@ -53,7 +53,7 @@ class RegistryClient:
         # 读取配置文件
         config = configparser.ConfigParser()
         try:
-            # config.read('config.ini')  # docker
+            # config.read('docket_test_config.ini')  # docker
             config.read('../config.ini')  # local
             registry_host = config['registry']['host']
             registry_port = int(config['registry']['port'])
@@ -137,6 +137,11 @@ class TCPClient:
 
 class RPCClient(TCPClient):
     def __init__(self, host=None, port=None):
+        """
+        初始化作用：
+        根据是否提供 RPCServer host和port判断是否使用注册中心
+        如果使用注册中心，启动一个线程定期轮询注册中心。
+        """
         self.logger = Logger()
         TCPClient.__init__(self, host, port)
         self.running = True
@@ -149,37 +154,58 @@ class RPCClient(TCPClient):
 
     def __getattr__(self, method):
         """
-        访问不存在属性时被调用的方法
+        访问不存在属性时被调用的方法，动态创建一个代理函数_func，用于处理该方法调用,从而实现RPC远程调用；
+
         为实现用户在Client端能直接调用Server端方法，利用__getattr__构建了_func方法，并将其通过setattr方法设置到RPCClient类中，使该类有Server端方法对应的映射。
-        调用add方法，即调用了对应的_func方法，将数据发送至Server端并返回远程调用返回的数据
+        如 RPCClient调用add方法，即调用了对应的_func方法，将数据发送至Server端并返回远程调用返回的数据
         :param method: 试图访问的不存在的属性名
-        :return: _func
+        :return: _func: 远程调用method后返回调用结果的函数
         """
 
         def _func(*args, **kwargs):
+            """
+            代理函数，用于调用Server端的方法；
+            连接服务器，发送方法调用请求，并处理响应
+
+            :param args: 远程调用位置参数
+            :param kwargs: 远程调用关键字参数
+            :return: 远程调用的结果
+            """
             try:
+                # 根据模式选择连接服务器的方式
                 if self.mode == 0:
                     self.connect_server_by_args()
                 else:
                     self.connect_server_by_registry()
+
+                # 构建方法调用的请求数据
                 dic = {'method_name': method, 'method_args': args, 'method_kwargs': kwargs}
+
+                # 发送请求数据到服务器
                 self.send(json.dumps(dic).encode('utf-8'))
+
+                # 接收并解析服务器的响应数据
                 response = self.recv(1024)
                 result = json.loads(response.decode('utf-8'))
                 result = result["res"]
+
+                # 记录方法调用信息和结果
                 self.logger.info(f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result}")
             except (json.JSONDecodeError, ConnectionError) as e:
+                # 处理JSON解析错误或连接错误，并记录错误日志
                 self.logger.error(f"Error occurred when calling method {method}: {e}")
                 result = None
             finally:
+                # 关闭连接
                 self.close()
+
             return result
 
+        # 将动态生成的方法绑定到当前实例上
         setattr(self, method, _func)
         return _func
 
     def connect_server_by_args(self):
-        """服务发现，连接SERVER"""
         try:
             host, port = self.host, self.port
             # 调用rpc服务，根据host ip地址类型开新sock
@@ -194,7 +220,6 @@ class RPCClient(TCPClient):
             raise ConnectionError(f"Failed to connect to server in connect_server_by_args: {e}")
 
     def connect_server_by_registry(self, protocol="json"):
-        """服务发现，连接SERVER"""
         # 第一次用registry find servers,有缓存优先缓存，定期轮询以更新缓存
         if len(self.registry_client.servers_cache) == 0:
             servers = self.registry_client.findRpcServers(protocol)
@@ -244,7 +269,8 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--host', type=str, help='客户端需要发送的服务端 ip 地址，同时支持 IPv4 和 IPv6，不得为空')
     parser.add_argument('-p', '--port', type=int, help='客户端需要发送的服务端端口，不得为空')
     parser.add_argument('-m', '--mode', type=str, default='registry', choices=['registry', 'server'],
-                        help='客户端模式，默认为server，registry模式不需要指定host和port')
+                        help='客户端运行模式，默认值为 server，可选值为 registry (通过注册中心发现服务)和 server(直接与服务端相连)。在 registry 模式下，无需指定 '
+                             'host 和 port 参数')
 
     args = parser.parse_args()
 
@@ -255,7 +281,7 @@ if __name__ == '__main__':
     try:
         for i in range(1, 20):
             time.sleep(3)
-            client.hi(i)
+            client.all_your_methods(i)
     except KeyboardInterrupt:
         client.logger.info(f"Main thread received KeyboardInterrupt, stopping...")
     finally:

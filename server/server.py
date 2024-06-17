@@ -1,6 +1,7 @@
 import argparse
 import configparser
 import http.client
+import inspect
 import json
 import math
 import os
@@ -112,19 +113,47 @@ class ServerStub:
         :param client_addr: 调用方的 ip 地址，运行日志记录需要
         :return: reply: 序列化后的调用结果信息（调用成功/调用不存在方法/调用方法参数错误/其余方法处理时发生错误）
         """
+
+        # 解码并解析请求数据
         req_data = json.loads(req.decode('utf-8'))
         self.logger.info(f"来自客户端{str(client_addr)}的请求数据{req_data}")
+
+        # 从请求数据中提取方法名、方法参数和方法关键字参数
         method_name = req_data['method_name']
         method_args = req_data['method_args']
         method_kwargs = req_data['method_kwargs']
+
         try:
-            res = self.services[method_name](*method_args, **method_kwargs)
+            # 响应服务发现
+            if method_name == 'all_your_methods':
+                # 返回所有注册的方法名和参数格式
+                res = []
+                for method_name, method in self.services.items():
+                    # 获取方法的签名
+                    sig = inspect.signature(method)
+                    params = sig.parameters
+                    # 构造方法信息字典，包括方法名、必需参数和可选参数
+                    method_info = {
+                        "method_name": method_name,
+                        "method_args": [param.name for param in params.values() if param.default == param.empty],
+                        "method_kwargs": {param.name: param.default for param in params.values() if
+                                          param.default != param.empty}
+                    }
+                    res.append(method_info)
+            else:
+                # 响应服务调用
+                res = self.services[method_name](*method_args, **method_kwargs)
         except KeyError:
+            # 方法名不存在的情况
             res = f"No service found for: {method_name}"
         except TypeError as e:
+            # 方法参数错误的情况
             res = f"Argument error: {e}"
         except Exception as e:
+            # 其他调用错误的情况
             res = f"Error calling method: {e}"
+
+        # 构造响应消息，记录日志并返回序列化后的响应消息
         reply_raw = {"res": res}
         reply = json.dumps(reply_raw).encode('utf-8')
         self.logger.info(f"给客户端{str(client_addr)}的回复{reply}")
@@ -145,12 +174,14 @@ class RegistryClient:
         self.logger = logger
         config = configparser.ConfigParser()
         try:
-            config.read('config.ini')
+            # config.read('docket_test_config.ini')  # docker
+            config.read('../config.ini')  # local
+            registry_host = config['registry']['host']
+            registry_port = int(config['registry']['port'])
         except Exception as e:
             self.logger.error(f"Error occurred in reading registry config:{e}")
             exit(-1)
-        registry_host = config['registry']['host']
-        registry_port = int(config['registry']['port'])
+
         self.registry_host = registry_host
         self.registry_port = registry_port
         self.first_register = True
@@ -174,7 +205,7 @@ class RegistryClient:
         else:
             instance = InstanceMeta("json", host, port)
 
-        instance.add_parameters({'ip_proto': 'ipv4'})
+        instance.add_parameters({'mode': 'development'})  # 加额外控制信息例子
         instance_data = json.dumps(instance.to_dict())
 
         conn.request("POST", "/myRegistry/register?proto=json", instance_data, headers)
@@ -258,7 +289,7 @@ class TCPServer:
         # 本地创建一个tcp client socket给server socket连一次关一次表示停止信号，解决accept不设timeout就无限期阻塞的问题
         h_socket = socket.socket(self.addr_type, socket.SOCK_STREAM)
         try:
-            h_socket.connect(('localhost', self.port))
+            h_socket.connect((self.host, self.port))
             h_socket.close()
         except Exception as e:
             e_name = e.__class__.__name__
@@ -331,10 +362,14 @@ class RPCServer(TCPServer):
             while True:
                 time.sleep(100)
         except KeyboardInterrupt:
-            self.stop_event.set()
-            self.registry_client.unregister_from_registry(self.host, self.port)
             self.logger.info("Received KeyboardInterrupt, stopping...")
+            self.registry_client.unregister_from_registry(self.host, self.port)
+            self.stop_event.set()
         finally:
+            self.logger.info("Waiting for other threads to join...")
+            self.register_and_send_hb_thread.join(3)
+            self.loop_detect_stop_signal_thread.join(3)
+            self.tcp_serve_thread.join(3)
             self.logger.info("Server service stopped.")
             exit(0)
 
