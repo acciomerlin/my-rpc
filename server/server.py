@@ -114,16 +114,16 @@ class ServerStub:
         :return: reply: 序列化后的调用结果信息（调用成功/调用不存在方法/调用方法参数错误/其余方法处理时发生错误）
         """
 
-        # 解码并解析请求数据
-        req_data = json.loads(req.decode('utf-8'))
-        self.logger.info(f"来自客户端{str(client_addr)}的请求数据{req_data}")
-
-        # 从请求数据中提取方法名、方法参数和方法关键字参数
-        method_name = req_data['method_name']
-        method_args = req_data['method_args']
-        method_kwargs = req_data['method_kwargs']
-
         try:
+            # 解码并解析请求数据
+            req_data = json.loads(req.decode('utf-8'))
+            self.logger.info(f"来自客户端{str(client_addr)}的请求数据{req_data}")
+
+            # 从请求数据中提取方法名、方法参数和方法关键字参数
+            method_name = req_data['method_name']
+            method_args = req_data['method_args']
+            method_kwargs = req_data['method_kwargs']
+
             # 响应服务发现
             if method_name == 'all_your_methods':
                 # 返回所有注册的方法名和参数格式
@@ -197,7 +197,7 @@ class RegistryClient:
         :param host: 注册服务的IP地址
         :param port: 注册服务的端口
         """
-        conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
+        conn = http.client.HTTPConnection(self.registry_host, self.registry_port, timeout=10)
         headers = {'Content-type': 'application/json'}
 
         if host == '0.0.0.0':
@@ -231,7 +231,7 @@ class RegistryClient:
         :param host: 注册服务的IP地址
         :param port: 注册服务的端口
         """
-        conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
+        conn = http.client.HTTPConnection(self.registry_host, self.registry_port, timeout=10)
         headers = {'Content-type': 'application/json'}
 
         if host == '0.0.0.0':
@@ -259,8 +259,8 @@ class RegistryClient:
         while not self.strong_stop_event.is_set() and not self.weak_stop_event.is_set():
             try:
                 self.register_to_registry(host, port)
-                time.sleep(9)
-            except (TimeoutError, ConnectionRefusedError) as e:
+                time.sleep(5)
+            except Exception as e:
                 self.logger.error(f'与注册中心通信时发生错误，停止与注册中心联系：{e}')
                 self.weak_stop_event.set()
 
@@ -286,14 +286,28 @@ class TCPServer:
         self.sock.listen(5)
 
     def send_tcp_server_stop_signal(self):
-        # 本地创建一个tcp client socket给server socket连一次关一次表示停止信号，解决accept不设timeout就无限期阻塞的问题
+        """
+        本地创建一个tcp client socket给server socket连一次关一次表示停止信号，
+        解决accept不设timeout就无限期阻塞的问题
+        """
+        # 检查地址类型并设置地址
+        if self.addr_type == socket.AF_INET6:
+            host = '::1'  # IPv6 localhost
+        else:
+            host = '127.0.0.1'  # IPv4 localhost
+
         h_socket = socket.socket(self.addr_type, socket.SOCK_STREAM)
         try:
-            h_socket.connect((self.host, self.port))
+            h_socket.connect((host, self.port))
             h_socket.close()
+            self.logger.info("Successfully sent stop signal to TCP server.")
         except Exception as e:
             e_name = e.__class__.__name__
-            self.logger.info(f"Received Exception {e_name}, stopping...")
+            e_msg = str(e)
+            self.logger.error(
+                f"Received Exception: {e_name}, Message: {e_msg}, when trying to connect to {host}:{self.port}")
+        finally:
+            h_socket.close()
 
     def loop_detect_stop_signal(self):
         while True:
@@ -348,8 +362,8 @@ class RPCServer(TCPServer):
                 client_sock.sendall(response_data)
         except EOFError:
             self.logger.info(f'info on handle: 客户端{str(client_addr)}关闭了连接')
-        except ConnectionResetError:
-            self.logger.error(f'except on handle: 客户端{str(client_addr)}异常地关闭了连接')
+        except Exception as e:
+            self.logger.error(f'except on handle: 客户端{str(client_addr)}异常地关闭了连接, {e}')
         finally:
             client_sock.close()
 
@@ -369,7 +383,7 @@ class RPCServer(TCPServer):
             self.logger.info("Waiting for other threads to join...")
             self.register_and_send_hb_thread.join(3)
             self.loop_detect_stop_signal_thread.join(3)
-            self.tcp_serve_thread.join(3)
+            self.tcp_serve_thread.join()
             self.logger.info("Server service stopped.")
             exit(0)
 
