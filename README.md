@@ -266,7 +266,7 @@ def loop_accept_client(self):
 - **RPCServer**: 继承自**TCPServer**，并组合**Logger**、**ServerStub**和**RegistryClient**实现了完整的RPC服务功能：
 
   	代码结构：
-
+  	
   					<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 上午9.16.45.png" alt="截屏2024-06-20 上午9.16.45" style="zoom: 33%;" />
 
 ​	成员变量解释：除继承和组合的实现，此类设置了三个线程来管理服务的开启、运行与停止，详细由init函数注释解释：
@@ -515,7 +515,7 @@ class InstanceMeta:
 
 ​	代码结构：
 
-<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 上午10.59.19.png" alt="截屏2024-06-20 上午10.59.19" style="zoom: 33%;" />
+<img src="./doc_png/截屏2024-06-20 上午10.59.19.png" alt="截屏2024-06-20 上午10.59.19" style="zoom: 33%;" />
 
 ​	成员变量解释：
 
@@ -563,7 +563,7 @@ def loop_check_health(self):
 
 ​	代码结构：
 
-<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午5.01.25.png" alt="截屏2024-06-20 下午5.01.25" style="zoom: 33%;" />
+<img src="./doc_png/截屏2024-06-20 下午5.01.25.png" alt="截屏2024-06-20 下午5.01.25" style="zoom: 33%;" />
 
 ​	成员变量解释：
 
@@ -643,25 +643,25 @@ except Exception as e:
 
 1. 与注册中心通信的异常/超时处理：位于RegistryCli ent的注销与心跳发送函数中:
 
-<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午6.47.40.png" alt="截屏2024-06-20 下午6.47.40" style="zoom:50%;" />
+<img src="./doc_png/截屏2024-06-20 下午6.47.40.png" alt="截屏2024-06-20 下午6.47.40" style="zoom:50%;" />
 
 2. 与客户端连接、发送响应数据时发生的异常/超时的处理：
 
-<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午7.03.48.png" alt="截屏2024-06-20 下午7.03.48" style="zoom:50%;" />
+<img src="./doc_png/截屏2024-06-20 下午7.03.48.png" alt="截屏2024-06-20 下午7.03.48" style="zoom: 33%;" />
 
 3. 调用映射服务的方法时，处理数据导致的异常：在 server.py class ServerStub call_method里，捕获这几种异常并返回结果给客户端：
 
-<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午6.44.25.png" alt="截屏2024-06-20 下午6.44.25" style="zoom: 33%;" />
+<img src="./doc_png/截屏2024-06-20 下午6.44.25.png" alt="截屏2024-06-20 下午6.44.25" style="zoom: 33%;" />
 
 **（3）注册中心处理异常/超时：**
 
-<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午7.05.26.png" alt="截屏2024-06-20 下午7.05.26" style="zoom:50%;" />
+<img src="./doc_png/截屏2024-06-20 下午7.05.26.png" alt="截屏2024-06-20 下午7.05.26" style="zoom: 33%;" />
 
 ## 四、运行教程
 
 根据运行环境是在本地还是docker，在client.py, server.py的RegistryClient初始化方法里选择相应的config:
 
-<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午6.38.43.png" alt="截屏2024-06-20 下午6.38.43" style="zoom:50%;" />
+<img src="./doc_png/截屏2024-06-20 下午6.38.43.png" alt="截屏2024-06-20 下午6.38.43" style="zoom:50%;" />
 
 ### 服务端启动参数
 
