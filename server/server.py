@@ -256,7 +256,7 @@ class RegistryClient:
 
     def register_send_heartbeat(self, host, port, stop_e):
         self.strong_stop_event = stop_e
-        while not self.strong_stop_event.is_set() and not self.weak_stop_event.is_set():
+        while not self.strong_stop_event.is_set() or not self.weak_stop_event.is_set():
             try:
                 self.register_to_registry(host, port)
                 time.sleep(5)
@@ -305,7 +305,7 @@ class TCPServer:
             e_name = e.__class__.__name__
             e_msg = str(e)
             self.logger.error(
-                f"Received Exception: {e_name}, Message: {e_msg}, when trying to connect to {host}:{self.port}")
+                f"Received Exception: {e_name}, Message: {e_msg}, when trying send tcp stop signal")
         finally:
             h_socket.close()
 
@@ -377,6 +377,10 @@ class RPCServer(TCPServer):
                 time.sleep(100)
         except KeyboardInterrupt:
             self.logger.info("Received KeyboardInterrupt, stopping...")
+            self.registry_client.unregister_from_registry(self.host, self.port)
+            self.stop_event.set()
+        except Exception as e:
+            self.logger.info(f"Unexpected exception: {e} occurred, stopping...")
             self.registry_client.unregister_from_registry(self.host, self.port)
             self.stop_event.set()
         finally:

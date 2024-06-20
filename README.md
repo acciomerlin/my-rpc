@@ -346,7 +346,7 @@ from datetime import datetime
 ```
 #### client.py代码结构：
 
-<img src="doc_png/c_struct.png" alt="client" style="zoom: 67%;" />
+<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 上午10.51.54.png" alt="截屏2024-06-20 上午10.51.54" style="zoom:50%;" />
 
 其中：
 
@@ -452,90 +452,24 @@ mode： 0(no registry) / 1(with registry) 如果使用注册中心，启动一�
         return _func
 ```
 
-​	connect_server_by_registry：
+​	connect_server_by_registry：通过注册中心连接服务端模式下连接服务端，函数签名与实现思路：
+
+```python
+def connect_server_by_registry(self, tcp_client, protocol="json"):
+  	    """
+        通过注册中心连接服务端模式下连接服务端, 此模式下轮询注册中心线程开启，
+        优先使用本地服务端缓存，为空则调用registry_client的findRpcServers，若结果仍为空则抛出无可用服务端异常
+        并在此处使用负载均衡类的负载均衡算法选出最终连接的服务端，进行连接
+        :param tcp_client: TCPClient 与选出的server建立连接的tcp客户端
+        :param protocol: 客户端使用的消息数据格式
+        """
+```
 
 ​	poll_registry：轮询注册中心，定期从注册中心获取最新的服务器列表更新缓存。
 
 ​	stop：停止客户端并关闭现有的socket连接。
 
-```python
-
-
-    def connect_server_by_registry(self, tcp_client, protocol="json"):
-        if len(self.registry_client.servers_cache) == 0:
-            servers = self.registry_client.findRpcServers(protocol)
-        else:
-            servers = list(self.registry_client.servers_cache)
-        if len(servers) == 0:
-            raise ConnectionError(f"No available servers")
-
-        server = LoadBalance.random(servers)
-        host, port = server
-
-        if '.' in host:
-            addr_type = socket.AF_INET
-        else:
-            addr_type = socket.AF_INET6
-        tcp_client.sock = socket.socket(addr_type, socket.SOCK_STREAM)
-        tcp_client.sock.settimeout(10)
-
-        try:
-            tcp_client.connect(host, port)
-            self.logger.info(f'Connected to server: {host},{port}')
-        except Exception as e:
-            if server in self.registry_client.servers_cache:
-                self.registry_client.servers_cache.remove(server)
-            raise ConnectionError(f"Failed to connect to rpc server, {e}")
-
-
-def test_sync_calls(client):
-    client.logger.info('同步调用测试开始')
-    for i in range(3):
-        time.sleep(1)
-        client.hi("sync")
-    client.logger.info('同步调用测试完成\n')
-
-
-def test_async_calls(client):
-    def call_method(index):
-        client.hi(index)
-
-    client.logger.info('异步调用测试开始')
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(call_method, i) for i in range(10)]
-        for future in futures:
-            future.result()
-    client.logger.info('异步调用测试完成\n')
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='TCP/JSON RPC Client')
-    parser.add_argument('-i', '--host', type=str, help='客户端需要发送的服务端 ip 地址，同时支持 IPv4 和 IPv6，不得为空')
-    parser.add_argument('-p', '--port', type=int, help='客户端需要发送的服务端端口，不得为空')
-    parser.add_argument('-m', '--mode', type=str, default='registry', choices=['registry', 'server'],
-                        help='客户端运行模式，默认值为 server，可选值为 registry (通过注册中心发现服务)和 server(直接与服务端相连)。在 registry 模式下，无需指定 '
-                             'host 和 port 参数')
-
-    args = parser.parse_args()
-
-    if args.mode == 'server' and (not args.host or not args.port):
-        parser.error("在server模式下，必须指定host和port参数")
-
-    client = RPCClient(host=args.host, port=args.port)
-    try:
-        # 同步调用测试
-        test_sync_calls(client)
-
-        # 异步调用测试
-        test_async_calls(client)
-
-    except KeyboardInterrupt:
-        client.logger.info(f"Main thread received KeyboardInterrupt, stopping...")
-    finally:
-        client.stop()
-        exit(0)
-
-```
+- **test_sync_calls&test_async_calls**：客户端同步调用测试与异步调用测试。
 
 ### 2.4 rpc注册中心的实现
 
@@ -579,151 +513,72 @@ class InstanceMeta:
 
 - **RegistryService**: 负责处理服务的注册、注销、和健康检测：
 
+​	代码结构：
+
+<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 上午10.59.19.png" alt="截屏2024-06-20 上午10.59.19" style="zoom: 33%;" />
+
+​	成员变量解释：
+
+```
+logger = logger  # 日志
+_health_thread = threading.Thread(target=self.loop_check_health)  # 心跳检测线程
+_stop_event = threading.Event()
+ins2timestamp = defaultdict(int)  # 存各个服务实例的时间戳，用于心跳检测
+proto2instances = defaultdict(list)  # 存不同消息协议对应的服务实例列表
+```
+
+​	register(self, ins: InstanceMeta)：处理服务实例注册，若服务不存在于proto2instances[注册实例消息协议]里，则服务实例为第一次注册，将其存入proto2instances[注册实例消息协议]并获取当前时间戳，将实例与其对应时间戳存入ins2timestamp[实例]中，输出服务实例成功注册日志信息，返回被成功注册的服务实例；若服务已存在，则更新ins2timestamp中对应实例的时间戳，输出服务实例重复注册信息，返回被重复注册的服务实例。
+
+​	unregister(self, ins: InstanceMeta)：处理服务实例注销，若服务不存在于proto2instances[注册实例消息协议]里，则输出注销实例不存在的信息，考虑可能是实例状态信息错误，将实例状态status设置为False后返回服务实例；若存在，则从proto2instances[注册实例消息协议]中删去此实例，并删除ins2timestamp[实例]，输出服务实例注销失败信息，将实例状态status设置为False后返回服务实例。
+
+​	find_instances_by_protocol(self, protocol="json")：根据消息协议返回对应服务实例列表。
+
+​	loop_check_health&handle_check_health&stop：实现对注册的服务实例的定期健康检测，移除不通过健康检测的服务实例，并能在注册中心服务器停止后停止负责定期健康检测的线程，代码思路：
+
 ```python
-class RegistryService:
-    """注册中心服务类"""
+def handle_check_health(self):
+    """对服务实例进行健康检测"""
+    cur_time = int(time.time()) # 获取当前时间戳
+    threshold # 设置健康标准
+    if not self.ins2timestamp: # 若服务实例列表为空
+        pass or 输出日志信息
+    else:  # 不为空，挨个检查
+        for ins, timestamp in list(self.ins2timestamp.items()):
+            if cur_time - timestamp > threshold: # 不满足健康标准
+                self.unregister(ins) # 注销此实例
+							
+def stop(self):
+    """停止心跳检测线程"""
+    self._stop_event.set()  # 设置停止事件
+    self._health_thread.join()  # 等待线程结束
 
-    def __init__(self, logger: Logger):
-        self.proto2instances = defaultdict(list)  # 存不同序列化数据格式对应的服务实例
-        self.ins2timestamp = defaultdict(int)  # 存各个服务实例的时间戳，用于心跳检测
-        self.logger = logger  # 日志
-        self._stop_event = threading.Event()
-        self._health_thread = threading.Thread(target=self.loop_check_health)  # 心跳检测线程
-        self._health_thread.start()
-
-    def register(self, ins: InstanceMeta) -> InstanceMeta:
-        """处理服务实例注册"""
-        proto = ins.protocol
-        if ins in self.proto2instances[proto]:
-            self.logger.info(f"Register already exists instance=> {ins}")
-            ins.set_status(True)
-            old_time = self.ins2timestamp[ins]
-            self.logger.info(f"Its last registered time: {datetime.fromtimestamp(old_time).strftime('%Y-%m-%d %H:%M:%S')}")
-            self.ins2timestamp[ins] = int(time.time())
-            new_time = self.ins2timestamp[ins]
-            self.logger.info(f"Updated its timestamp: {datetime.fromtimestamp(new_time).strftime('%Y-%m-%d %H:%M:%S')}\n")
-            return ins
-        self.logger.info(f"Register instance=> {ins}\n")
-        ins.set_status(True)
-        self.proto2instances[proto].append(ins)
-        self.ins2timestamp[ins] = int(time.time())
-        return ins
-
-    def unregister(self, ins: InstanceMeta) -> InstanceMeta:
-        """处理服务实例注销"""
-        proto = ins.protocol
-        if ins not in self.proto2instances[proto]:
-            self.logger.info(f"Unregister an instance not found=> {ins}\n")
-            ins.set_status(False)
-            return ins
-        self.logger.info(f"Unregister instance=> {ins}\n")
-        self.proto2instances[proto].remove(ins)
-        del self.ins2timestamp[ins]
-        ins.set_status(False)
-        return ins
-
-    def find_instances_by_protocol(self, protocol="json") -> List[InstanceMeta]:
-        """根据序列化消息格式返回对应服务实例"""
-        return self.proto2instances[protocol]
-
-    def handle_check_health(self):
-        """对服务实例进行健康检测"""
-        cur_time = int(time.time())
-        threshold = 10
-        if not self.ins2timestamp:
-            self.logger.info('Health check=> Instance list is empty\n')
-        else:
-            self.logger.info('Health check==================>')
-            for ins, timestamp in list(self.ins2timestamp.items()):
-                if cur_time - timestamp > threshold:
-                    self.logger.info(
-                        f"!!!Instance {ins} is unhealthy, last seen at {datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')}")
-                    self.unregister(ins)
-                else:
-                    self.logger.info(
-                        f"Instance {ins} is healthy, last seen at {datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')}")
-
-    def stop(self):
-        """停止心跳检测线程"""
-        self._stop_event.set()  # 设置停止事件
-        self._health_thread.join()  # 等待线程结束
-
-    def loop_check_health(self):
-        """定期健康检测，循环"""
-        time.sleep(5)
-        self.logger.info("健康检测已在后台开启")
-        while not self._stop_event.is_set():
-            self.handle_check_health()
-            self._stop_event.wait(5)  # 等待5秒或直到事件被设置
+def loop_check_health(self):
+    """定期健康检测，当停止事件未被设置时循环，每5s进行一次健康检查"""
+    while not self._stop_event.is_set():
+        self.handle_check_health()
+        self._stop_event.wait(5)
 ```
 
 - **RequestHandler**: 继承于**BaseHTTPRequestHandler**，负责处理HTTP请求，并根据不同的路径执行相应的注册中心功能：
 
-```python
-class RequestHandler(BaseHTTPRequestHandler):
-    """注册中心路由类"""
+​	代码结构：
 
-    def __init__(self, *args, **kwargs):
-        self.registry_service = kwargs.pop('registry_service')  # 处理服务
-        self.logger = kwargs.pop('logger')  # 日志
-        super().__init__(*args, **kwargs)  # 父类默认初始化
+<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午5.01.25.png" alt="截屏2024-06-20 下午5.01.25" style="zoom: 33%;" />
 
-    def do_POST(self):
-        parsed_path = urlparse(self.path)
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        body = json.loads(post_data)
+​	成员变量解释：
 
-        if parsed_path.path == '/myRegistry/register':
-            self.handle_register(body)
-        elif parsed_path.path == '/myRegistry/unregister':
-            self.handle_unregister(body)
-        else:
-            self.handle_404()
-
-    def do_GET(self):
-        parsed_path = urlparse(self.path)
-        query_params = parse_qs(parsed_path.query)
-
-        if parsed_path.path == '/myRegistry/findAllInstances':
-            self.handle_find_all_instances(query_params)
-        else:
-            self.handle_404()
-
-    def handle_register(self, body):
-        """服务注册路由"""
-        instance_meta = InstanceMeta.from_dict(body)  # 获取注册实例
-        registered_instance = self.registry_service.register(instance_meta)  # 处理注册服务
-        self.respond(registered_instance.to_dict())  # 返回注册好的实例
-
-    def handle_unregister(self, body):
-        """服务注销路由"""
-        instance_meta = InstanceMeta.from_dict(body)
-        unregistered_instance = self.registry_service.unregister(instance_meta)
-        self.respond(unregistered_instance.to_dict())
-
-    def handle_find_all_instances(self, query_params):
-        """服务发现路由，根据序列化数据格式请求"""
-        protocol = query_params.get('proto', [None])[0]
-        instances = self.registry_service.find_instances_by_protocol(protocol)
-        self.respond([instance.to_dict() for instance in instances])
-
-    def handle_404(self):
-        """无效路由处理"""
-        self.send_response(404)
-        self.send_header('Content-Type', 'application/json')
-        self.end_headers()
-        response = json.dumps({'error': 'Not Found'}).encode('utf-8')
-        self.wfile.write(response)
-
-    def respond(self, data):
-        """respond函数"""
-        response = json.dumps(data).encode('utf-8')
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
-        self.end_headers()
-        self.wfile.write(response)
 ```
+registry_service ： RegistryService 实际处理服务实例
+logger ：Logger 运行日志
+```
+
+​	do_POST：处理服务注册与注销请求的路由`'/myRegistry/register'`, `'/myRegistry/unregister'`, `，其他POST请求返回404。
+
+​	do_GET：处理获取服务实例列表请求的路由`'/myRegistry/findAllInstances'`，其他GET请求返回404。
+
+​	handle_register&handle_unregister&handle_find_all_instances&handle_404：分别处理服务注册、注销、发现及无效请求的逻辑。
+
+​	respond：构造并发送HTTP响应。
 
 - **run(...)**: 启动注册中心HTTP服务器：
 
@@ -742,48 +597,71 @@ def run(server_class=ThreadingHTTPServer, handler_class=RequestHandler, host='0.
     :return: None
     """
 ```
-### 3.6 支持并发
-
-服务端需要具有并发处理客户端请求的能力。
-
-比如，假设客户端 A 发来请求，然后服务端处理客户端 A 的请求，这时客
-
-户端 B 也发来了请求，要求服务端也能同时处理客户端 B 的请求，不能出现服
-
-务端处理完客户端 A 的请求才能处理客户端 B 的请求的情况，导致客户端 B需要等待。具体地，可以利用多线程或者多进程的方式，参考我们之前的编程作
-
-业！
-
-另外，**我们要求，服务端至少可以支持并发处理 10 个客户端的请求**。
-
 ## 三、异常处理及超时处理
-
-RPC 框架需要具备进行异常处理以及超时处理的能力。其中，超时处理包括
-
-但不限于以下几个方面。
 
 **（1）客户端处理异常/超时的地方：**
 
- 与服务端建立连接时产生的异常/超时
+1. 向注册中心请求服务端列表时产生的异常/超时处理：
 
- 发送请求到服务端，写数据时出现的异常/超时
+```python
+# 在 client.py class RegistryClient 的 findRpcServers中进行处理
+try:
+  conn.request("GET", f"/myRegistry/findAllInstances?proto={protocol}")
+  response = conn.getresponse()
+  if response.status == 200:
+		# 正常，返回找到的服务端列表
+  else:
+    # 不正常响应码，返回空列表，本次与服务端进行连接从本地缓存服务列表中选取
+except (TimeoutError, ConnectionRefusedError) as e: 
+ 		# 捕捉超时与连接异常，本次与服务端进行连接从本地缓存服务列表中选取
+finally: # 最终关闭http连接
+  conn.close()
+```
 
- 等待服务端处理时，等待处理导致的异常/超时（比如服务端已挂死，
+2. 与服务端建立连接时，发送请求到服务端时，等待服务端处理时，从服务端接收响应时产生的异常/超时处理：
 
-迟迟不响应）
-
- 从服务端接收响应时，读数据导致的异常/超时
+```python
+# 在 client.py class RegistryClient 的 __getattr__ 的 _func 中进行处理
+try:
+  	#...
+    if 直接连接服务端模式:
+        tcp_client.sock.settimeout(10) # 设置处理超时限制
+        tcp_client.connect()
+    else: 
+      	# 通过注册中心连接服务端模式，connect_server_by_registry中未发现可用服务端或者与服务端连接出现异常时将抛出Exception
+        self.connect_server_by_registry(tcp_client)
+		#...
+    tcp_client.send(json.dumps(dic).encode('utf-8')) # 发送请求，出问题会被捕获
+    response = tcp_client.recv(1024) # 接受消息，出问题会被捕获
+    result = json.loads(response.decode('utf-8'))["res"] # 反序列化出问题时也会被捕获
+		#...
+except Exception as e:
+		输出异常信息日志，result=None返回
+```
 
 **（2）服务端处理异常/超时的地方：**
 
- 读取客户端请求数据时，读数据导致的异常/超时
+1. 与注册中心通信的异常/超时处理：位于RegistryCli ent的注销与心跳发送函数中:
 
- 发送响应数据时，写数据导致的异常/超时
+<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午6.47.40.png" alt="截屏2024-06-20 下午6.47.40" style="zoom:50%;" />
 
- 调用映射服务的方法时，处理数据导致的异常/超时
+2. 与客户端连接、发送响应数据时发生的异常/超时的处理：
 
+<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午7.03.48.png" alt="截屏2024-06-20 下午7.03.48" style="zoom:50%;" />
+
+3. 调用映射服务的方法时，处理数据导致的异常：在 server.py class ServerStub call_method里，捕获这几种异常并返回结果给客户端：
+
+<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午6.44.25.png" alt="截屏2024-06-20 下午6.44.25" style="zoom: 33%;" />
+
+**（3）注册中心处理异常/超时：**
+
+<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午7.05.26.png" alt="截屏2024-06-20 下午7.05.26" style="zoom:50%;" />
 
 ## 四、运行教程
+
+根据运行环境是在本地还是docker，在client.py, server.py的RegistryClient初始化方法里选择相应的config:
+
+<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 下午6.38.43.png" alt="截屏2024-06-20 下午6.38.43" style="zoom:50%;" />
 
 ### 服务端启动参数
 

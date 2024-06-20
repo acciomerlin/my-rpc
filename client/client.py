@@ -149,6 +149,12 @@ class RPCClient:
             try:
                 tcp_client = TCPClient(self.host, self.port)
                 if self.mode == 0:
+                    if '.' in self.host:
+                        addr_type = socket.AF_INET
+                    else:
+                        addr_type = socket.AF_INET6
+                    tcp_client.sock = socket.socket(addr_type, socket.SOCK_STREAM)
+                    tcp_client.sock.settimeout(10)
                     tcp_client.connect()
                 else:
                     self.connect_server_by_registry(tcp_client)
@@ -160,7 +166,7 @@ class RPCClient:
 
                 tcp_client.close()
                 self.logger.info(f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result}")
-            except (json.JSONDecodeError, ConnectionError) as e:
+            except Exception as e:
                 self.logger.error(f"Error occurred when calling method {method}: {e}")
                 result = None
 
@@ -170,12 +176,19 @@ class RPCClient:
         return _func
 
     def connect_server_by_registry(self, tcp_client, protocol="json"):
+        """
+        通过注册中心连接服务端模式下连接服务端, 此模式下轮询注册中心线程开启，
+        优先使用本地服务端缓存，为空则调用registry_client的findRpcServers，若结果仍为空则抛出无可用服务端异常
+        并在此处使用负载均衡类的负载均衡算法选出最终连接的服务端，进行连接
+        :param tcp_client: TCPClient 与选出的server建立连接的tcp客户端
+        :param protocol: 客户端使用的消息数据格式
+        """
         if len(self.registry_client.servers_cache) == 0:
             servers = self.registry_client.findRpcServers(protocol)
         else:
             servers = list(self.registry_client.servers_cache)
         if len(servers) == 0:
-            raise ConnectionError(f"No available servers")
+            raise Exception(f"No available servers")
 
         server = LoadBalance.random(servers)
         host, port = server
@@ -193,7 +206,7 @@ class RPCClient:
         except Exception as e:
             if server in self.registry_client.servers_cache:
                 self.registry_client.servers_cache.remove(server)
-            raise ConnectionError(f"Failed to connect to rpc server, {e}")
+            raise Exception(f"Failed to connect to rpc server, {e}")
 
     def poll_registry(self):
         while self.running:

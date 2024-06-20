@@ -163,7 +163,7 @@ class RegistryService:
 
     def loop_check_health(self):
         """定期健康检测，循环"""
-        time.sleep(5)
+        time.sleep(2)  # 等http服务先开启
         self.logger.info("健康检测已在后台开启")
         while not self._stop_event.is_set():
             self.handle_check_health()
@@ -279,6 +279,9 @@ def run(server_class=ThreadingHTTPServer, handler_class=RequestHandler, host='0.
     except KeyboardInterrupt:
         # 处理键盘中断（Ctrl+C）
         logger.info("Main thread received KeyboardInterrupt, stopping...")
+    except BaseException as e:
+        # 处理其他异常
+        logger.error(f"注册中心服务运行时出错：{e}，停止运行")
     finally:
         # 停止注册中心服务
         registry_service.stop()
