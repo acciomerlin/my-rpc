@@ -53,7 +53,6 @@ class RegistryClient:
         # 读取配置文件
         config = configparser.ConfigParser()
         try:
-            print(1)
             config.read('docket_test_config.ini')  # docker
             # config.read('../config.ini')  # local
             self.registry_host = config['registry']['host']

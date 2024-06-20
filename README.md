@@ -365,167 +365,61 @@ class LoadBalance:
 
 ​	代码结构：
 
-​	
+​						<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 上午9.49.47.png" alt="截屏2024-06-20 上午9.49.47" style="zoom:33%;" />
+
+​	成员变量解释：
 
 ```python
-class RegistryClient:
-    def __init__(self, logger):
-        """
-        成员变量解释
-        self.registry_host : string 配置文件中读入的注册中心的 IP
-        self.registry_port : int 配置文件中读入的注册中心的端口号
-        self.servers_cache = set() 本地缓存的服务端列表
-        :param logger: 运行日志
-        """
-
-    def findRpcServers(self, protocol="json"):
-        """
-        http与注册中心通信，查询参数protocol为客户端使用的消息数据格式，默认为json，
-        本项目只实现了json的，后续可拓展，
-        返回发现的服务的 (host, port) 的元组 list
-        :return: tuple list
-        """
-        conn = http.client.HTTPConnection(self.registry_host, self.registry_port)
-        try:
-            conn.request("GET", f"/myRegistry/findAllInstances?proto={protocol}")
-            response = conn.getresponse()
-            if response.status == 200:
-                data = response.read().decode()
-                servers_raw = json.loads(data)
-                tmp_server_set = set()
-                for ins in servers_raw:
-                    tmp_server_set.add((ins['host'], ins['port']))
-                origin_set = self.servers_cache.copy()
-                self.servers_cache = self.servers_cache.union(tmp_server_set)
-                self.servers_cache -= origin_set - tmp_server_set
-                servers = list(self.servers_cache)
-                return servers
-            else:
-                return []
-        except (TimeoutError, ConnectionRefusedError) as e:
-            self.logger.error(f'与注册中心通信时发生错误：{e}，获取最新服务端信息失败，使用本地缓存的服务端列表')
-            return []
-        finally:
-            conn.close()
+registry_host : string 配置文件中读入的注册中心的 IP
+registry_port : int 配置文件中读入的注册中心的端口号
+servers_cache = set() 本地缓存的服务端列表
+logger: 运行日志
 ```
 
-- **TCPClient**: 基础的 TCP 客户端，封装了TCP通信socket的一些功能便于RPCClient的编写:
+​	findRpcServers：根据客户端支持的消息序列化协议向注册中心请求实现此协议的服务端，默认json，或者也可以理解成实现了自己设置的rpc消息协议的服务端，比如此项目的protocol=json就指的是寻找实现了以json方式序列化的自定义消息数据格式的服务端，函数签名与实现思路：
 
 ```python
-class TCPClient:
-    def __init__(self, host=None, port=None):
-        """
-        分成通过注册中心发现服务与直接与服务端相连两种，
-        前者self.host, self.port会在每次从注册中心发现服务，负载均衡算法执行后被指定
-        后者需自身指定服务端ip与端口号
-        """
-        self.sock = None
-        self.host = host
-        self.port = port
-
-    def connect(self, host=None, port=None):
-        """
-        连接SERVER，分成通过注册中心发现服务与直接与服务端相连两种，
-        后者需自身指定服务端ip与端口号
-        """
-        if host is None and port is None:
-            self.sock.connect((self.host, self.port))
-        else:
-            self.sock.connect((host, port))
-
-    def send(self, data):
-        """发送数据到SERVER"""
-        self.sock.send(data)
-
-    def recv(self, length):
-        """接收SERVER回传的数据"""
-        return self.sock.recv(length)
-
-    def close(self):
-        """关闭连接"""
-        self.sock.close()
+def findRpcServers(self, protocol="json"):
+    """
+    http与注册中心通信，查询参数protocol为客户端使用的消息数据格式，
+    将查询到的可用服务端列表与本地缓存的服务端列表比对，更新本地列表
+    :return: tuple list 服务的 (host, port) 的元组 list
+    """
 ```
 
-- **RPCClient**: 继承自 **TCPClient**，实现了 RPC 客户端的功能，分成两种模式，使用注册中心进行服务发现然后调用，与不使用注册中心直接与服务端连接进行服务调用：
+- **TCPClient**: 基础的 TCP 客户端，封装了TCP通信socket的一些功能便于RPCClient的编写。
+
+- **RPCClient**: 通过组合RegistryClient, Logger，在服务调用时使用TCPClient，实现了 RPC 客户端的功能，分成两种模式，使用注册中心进行服务发现然后调用，与不使用注册中心直接与服务端连接进行服务调用：
+
+  代码结构：
+
+  <img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 上午10.09.05.png" alt="截屏2024-06-20 上午10.09.05" style="zoom:33%;" />
+
+  成员变量解释：
+
+```
+host: 直接连接服务端模式时指定的服务端IP地址
+
+port: 直接连接服务端模式时指定的服务端端口号
+
+logger: Logger 运行日志
+
+registry_client: RegistryClient 客户端的RegistryClient实例，与注册中心通信
+
+running: bool 运行状态标志，用于停止可能的轮询注册中心线程
+
+mode： 0(no registry) / 1(with registry) 如果使用注册中心，启动一个线程定期轮询注册中心
+```
+
+​	getattr&_func：客户端实现rpc服务调用的方法，函数签名与实现思路：
 
 ```python
-class RPCClient(TCPClient):
-    def __init__(self, host=None, port=None):
-        """
-        初始化作用：
-        根据是否提供 RPCServer host和port判断是否使用注册中心
-        如果使用注册中心，启动一个线程定期轮询注册中心。
-        self.logger: Logger 运行日志
-        self.running: bool 运行状态标志，用于停止可能的轮询注册中心线程
-        self.mode： 0（no registry) / 1(with registry)
-        """
-    def poll_registry(self):
-        """轮询注册中心，定期从注册中心获取最新的服务器列表更新缓存"""
-        while self.running:
-            self.registry_client.findRpcServers()
-            time.sleep(3)
-
-    def stop(self):
-        """停止客户端并关闭现有的socket连接"""
-        self.running = False
-        if self.sock:
-            self.close()
-        
-    def connect_server_by_args(self):
-        """
-        服务发现，直接连接服务器
-        根据host的格式确定使用IPv4还是IPv6
-        """
-        try:
-            host, port = self.host, self.port
-            # 调用rpc服务，根据host ip地址类型开新sock
-            if '.' in host:
-                addr_type = socket.AF_INET
-            else:
-                addr_type = socket.AF_INET6
-            self.connect(host, port)
-            self.logger.info(f'Connected to server: {host},{port}')
-        except Exception as e:
-            raise ConnectionError(f"Failed to connect to server in connect_server_by_args: {e}")
-
-    def connect_server_by_registry(self, protocol="json"):
-        """
-        服务发现，通过注册中心连接服务器
-        从注册中心获取可用服务器列表，如果有缓存则优先使用缓存，
-        使用负载均衡算法选择一个服务器进行连接，
-        根据host的格式确定使用IPv4还是IPv6
-        """
-        if len(self.registry_client.servers_cache) == 0:
-            servers = self.registry_client.findRpcServers(protocol)
-        else:
-            servers = list(self.registry_client.servers_cache)
-        if len(servers) == 0:
-            raise ConnectionError(f"No available servers")
-        server = LoadBalance.random(servers)
-        host, port = server
-     
-        # 调用rpc服务，根据host ip地址类型开新sock
-        if '.' in host:
-            addr_type = socket.AF_INET
-        else:
-            addr_type = socket.AF_INET6
-        self.sock = socket.socket(addr_type, socket.SOCK_STREAM)
-        
-        try:
-            self.connect(host, port)
-            self.logger.info(f'Connected to server: {host},{port}')
-        except Exception:
-            if server in self.registry_client.servers_cache:
-                self.registry_client.servers_cache.remove(server)
-            raise ConnectionError(f"Failed to connect to rpc server")
-
     def __getattr__(self, method):
         """
-        访问不存在属性时被调用的方法，动态创建一个代理函数_func，用于处理该方法调用,从而实现RPC远程调用；
-        
-        为实现用户在Client端能直接调用Server端方法，利用__getattr__构建了_func方法，
-        并将其通过setattr方法设置到RPCClient类中，使该类有Server端方法对应的映射,
-        如 RPCClient调用add方法，即调用了对应的_func方法，将数据发送至Server端并返回远程调用返回的数据
+        访问不存在属性时被调用的方法，动态创建一个代理函数_func，用于处理该方法调用,
+        从而实现RPC远程调用； 
+        如 RPCClient调用add方法，即调用了对应的_func方法，
+        将数据发送至Server端并返回远程调用返回的数据
         :param method: 试图访问的不存在的属性名
         :return: _func: 远程调用method后返回调用结果的函数
         """
@@ -533,32 +427,114 @@ class RPCClient(TCPClient):
         def _func(*args, **kwargs):
             """
             代理函数，用于调用Server端的方法；
-            连接服务器，发送方法调用请求，并处理响应
-
             :param args: 远程调用位置参数
             :param kwargs: 远程调用关键字参数
             :return: 远程调用的结果
             """
             try:
-                if self.mode == 0:
-                    self.connect_server_by_args()
-                else:
-                    self.connect_server_by_registry()
+                tcp_client = TCPClient(self.host, self.port)
+								# 略模式选择
+         				...
+                # 按照规定的消息格式构建调用消息并发送
                 dic = {'method_name': method, 'method_args': args, 'method_kwargs': kwargs}
-                self.send(json.dumps(dic).encode('utf-8'))
+                tcp_client.send(json.dumps(dic).encode('utf-8'))
+                # 接受调用结果，反序列化并取出结果
                 response = self.recv(1024)
                 result = json.loads(response.decode('utf-8'))
                 result = result["res"]
-                self.logger.info(f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result}")
+                # 关闭本次请求socket
+                tcp_client.close()
             except (json.JSONDecodeError, ConnectionError) as e:
-                self.logger.error(f"Error occurred when calling method {method}: {e}")
-                result = None
-            finally:
-                self.close()
+								# 收结果异常处理
             return result
 
         setattr(self, method, _func)
         return _func
+```
+
+​	connect_server_by_registry：
+
+​	poll_registry：轮询注册中心，定期从注册中心获取最新的服务器列表更新缓存。
+
+​	stop：停止客户端并关闭现有的socket连接。
+
+```python
+
+
+    def connect_server_by_registry(self, tcp_client, protocol="json"):
+        if len(self.registry_client.servers_cache) == 0:
+            servers = self.registry_client.findRpcServers(protocol)
+        else:
+            servers = list(self.registry_client.servers_cache)
+        if len(servers) == 0:
+            raise ConnectionError(f"No available servers")
+
+        server = LoadBalance.random(servers)
+        host, port = server
+
+        if '.' in host:
+            addr_type = socket.AF_INET
+        else:
+            addr_type = socket.AF_INET6
+        tcp_client.sock = socket.socket(addr_type, socket.SOCK_STREAM)
+        tcp_client.sock.settimeout(10)
+
+        try:
+            tcp_client.connect(host, port)
+            self.logger.info(f'Connected to server: {host},{port}')
+        except Exception as e:
+            if server in self.registry_client.servers_cache:
+                self.registry_client.servers_cache.remove(server)
+            raise ConnectionError(f"Failed to connect to rpc server, {e}")
+
+
+def test_sync_calls(client):
+    client.logger.info('同步调用测试开始')
+    for i in range(3):
+        time.sleep(1)
+        client.hi("sync")
+    client.logger.info('同步调用测试完成\n')
+
+
+def test_async_calls(client):
+    def call_method(index):
+        client.hi(index)
+
+    client.logger.info('异步调用测试开始')
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(call_method, i) for i in range(10)]
+        for future in futures:
+            future.result()
+    client.logger.info('异步调用测试完成\n')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='TCP/JSON RPC Client')
+    parser.add_argument('-i', '--host', type=str, help='客户端需要发送的服务端 ip 地址，同时支持 IPv4 和 IPv6，不得为空')
+    parser.add_argument('-p', '--port', type=int, help='客户端需要发送的服务端端口，不得为空')
+    parser.add_argument('-m', '--mode', type=str, default='registry', choices=['registry', 'server'],
+                        help='客户端运行模式，默认值为 server，可选值为 registry (通过注册中心发现服务)和 server(直接与服务端相连)。在 registry 模式下，无需指定 '
+                             'host 和 port 参数')
+
+    args = parser.parse_args()
+
+    if args.mode == 'server' and (not args.host or not args.port):
+        parser.error("在server模式下，必须指定host和port参数")
+
+    client = RPCClient(host=args.host, port=args.port)
+    try:
+        # 同步调用测试
+        test_sync_calls(client)
+
+        # 异步调用测试
+        test_async_calls(client)
+
+    except KeyboardInterrupt:
+        client.logger.info(f"Main thread received KeyboardInterrupt, stopping...")
+    finally:
+        client.stop()
+        exit(0)
+
 ```
 
 ### 2.4 rpc注册中心的实现
