@@ -451,4 +451,5 @@ if __name__ == '__main__':
     server = RPCServer(args.host, args.port)
     server.stub.register_services(add)
     server.stub.register_services(hi)
+    server.stub.register_services(area_of_circle)
     server.serve()

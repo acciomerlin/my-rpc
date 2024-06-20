@@ -28,10 +28,11 @@ class Logger:
             self.log_filename = f'./log/{timestamp}.txt'
 
     def log(self, level, msg):
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # 包含毫秒的时间格式
         if self.save:
             with open(self.log_filename, 'a') as log_file:
-                log_file.write(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}\n')
-        print(f'[{level}]{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - {msg}')
+                log_file.write(f'[{level}]{timestamp} - {msg}\n')
+        print(f'[{level}]{timestamp} - {msg}')
 
     def info(self, msg):
         self.log('INFO', msg)
@@ -165,7 +166,7 @@ class RPCClient:
                 result = json.loads(response.decode('utf-8'))["res"]
 
                 tcp_client.close()
-                self.logger.info(f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result}")
+                self.logger.info(f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result} ｜ server: {self.host}:{self.port}")
             except Exception as e:
                 self.logger.error(f"Error occurred when calling method {method}: {e}")
                 result = None
@@ -192,6 +193,7 @@ class RPCClient:
 
         server = LoadBalance.random(servers)
         host, port = server
+        self.host, self.port = host, port # just for print log
 
         if '.' in host:
             addr_type = socket.AF_INET
@@ -202,7 +204,6 @@ class RPCClient:
 
         try:
             tcp_client.connect(host, port)
-            self.logger.info(f'Connected to server: {host},{port}')
         except Exception as e:
             if server in self.registry_client.servers_cache:
                 self.registry_client.servers_cache.remove(server)
@@ -221,7 +222,7 @@ def test_sync_calls(client):
     client.logger.info('同步调用测试开始')
     for i in range(3):
         time.sleep(1)
-        client.hi("sync")
+        client.hi(i)
     client.logger.info('同步调用测试完成\n')
 
 
@@ -230,8 +231,8 @@ def test_async_calls(client):
         client.hi(index)
 
     client.logger.info('异步调用测试开始')
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(call_method, i) for i in range(10)]
+    with ThreadPoolExecutor(max_workers=30) as executor:
+        futures = [executor.submit(call_method, i) for i in range(30)]
         for future in futures:
             future.result()
     client.logger.info('异步调用测试完成\n')
