@@ -174,8 +174,8 @@ class RegistryClient:
         self.logger = logger
         config = configparser.ConfigParser()
         try:
-            # config.read('docket_test_config.ini')  # docker
-            config.read('../config.ini')  # local
+            config.read('docket_test_config.ini')  # docker
+            # config.read('../config.ini')  # local
             registry_host = config['registry']['host']
             registry_port = int(config['registry']['port'])
         except Exception as e:

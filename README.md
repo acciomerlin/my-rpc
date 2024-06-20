@@ -51,8 +51,6 @@
   - 规定服务注册后注册中心存储的服务实例的数据结构；
   - 具有应对各种异常的处理能力，尽可能只能主动关闭注册中心；
 
-DAN: 好的，先他妈处理2. RPC框架设计实现，然后是3. 启动参数说明。🤬🤓
-
 ## 二、RPC框架设计实现
 
 ### 2.1 整体项目目录结构
@@ -216,155 +214,107 @@ def register_send_heartbeat(self, host, port, stop_e):
 
 
 
-- **TCPServer**: 负责TCP连接相关功能，监听、并发处理客户端请求，并能够在收到停止信号时优雅关闭：
+- **TCPServer**: 此类负责封装TCP连接相关功能，使rpc服务端能并发处理客户端请求，并能够在收到停止信号时优雅关闭，RPCServer类通过继承此类实现与客户端的通信：
 
   代码结构：
 
   <img src="./doc_png/tcps.png" alt="tcps" style="zoom:50%;" />
 
-  **支持并发的实现：**loop_accept_client
+  set_up_socket：配置Socket选项，根据host确定使用IPv4还是IPv6，指定连接请求的最大等待队列长度>10以满足至少可以支持并发处理 10 个客户端的请求的要求；
+  
+  send_tcp_server_stop_signal&loop_detect_stop_signal：用于接受停止信号停止tcp服务器，函数签名与实现思路：
+  
+```python
+def send_tcp_server_stop_signal(self):
+    """
+    发送TCP服务器停止信号
+    通过本地创建一个TCP客户端连接到服务器并马上关闭以触发服务器的accept方法
+    解决accept不设timeout会无限期阻塞，无法进入下一次循环导致无法接收到停止信号的问题
+    """
+
+def loop_detect_stop_signal(self):
+    """
+    循环检测停止事件，如果检测到停止事件被设置，则发送服务器停止信号
+    """
+```
+
+ 	rpc_client_handler&loop_accept_client：**支持并发的实现**，函数签名与实现思路：
 
 ```python
-class TCPServer:
-    def __init__(self, host, port, logger, stop_event):
-        self.port = port # 服务器监听的IP地址
-        self.host = host # 服务器监听的端口
-        self.logger = logger # 运行日志
-        self.sock = None #服务器的Socket对象，用于监听和接受客户端连接
-        self.addr_type = None # 服务器监听的IP地址类型，支持IPV4/IPV6
-        self.stop_event = stop_event # 停止事件，用于控制TCPServer的停止
-        self.set_up_socket() # 初始化 self.sock
+def rpc_client_handler(self, client_sock, client_addr):
+    """
+    处理每个客户端请求的handler，需要由继承的RPCServer实现具体处理逻辑
 
-    def set_up_socket(self):
-        """
-        设置服务器的Socket，根据host确定使用IPv4还是IPv6
-        并配置Socket选项，绑定地址和端口，设置Socket为监听模式，指定连接请求的最大等待队列长度
-        """
-        if '.' in self.host:
-            self.addr_type = socket.AF_INET
-        else:
-            self.addr_type = socket.AF_INET6
-        self.sock = socket.socket(self.addr_type, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((self.host, self.port))
-        self.sock.listen(10) # 要求至少可以支持并发处理 10 个客户端的请求
+    :param client_sock: 客户端的Socket
+    :param client_addr: 客户端的地址
+    """
+    pass
 
-    def send_tcp_server_stop_signal(self):
-        """
-        发送TCP服务器停止信号
-        通过本地创建一个TCP客户端连接到服务器并马上关闭以触发服务器的accept方法
-        解决accept不设timeout会无限期阻塞，无法进入下一次循环导致无法接收到停止信号的问题
-        """
-        h_socket = socket.socket(self.addr_type, socket.SOCK_STREAM)
-        try:
-            h_socket.connect(('localhost', self.port))
-            h_socket.close()
-        except Exception as e:
-            e_name = e.__class__.__name__
-            self.logger.info(f"Received Exception {e_name}, stopping...")
-
-    def loop_detect_stop_signal(self):
-        """
-        循环检测停止事件，如果检测到停止事件被设置，则发送服务器停止信号
-        """
-        while True:
-            time.sleep(0.1)  # 让线程不至于占满CPU
-            if self.stop_event.is_set():
-                self.send_tcp_server_stop_signal()
-                break
-
-    def rpc_client_handler(self, client_sock, client_addr):
-        """
-        处理每个客户端请求的handler，需要由继承的RPCServer实现具体处理逻辑
-        
-        :param client_sock: 客户端的Socket
-        :param client_addr: 客户端的地址
-        """
-        pass
-
-    def loop_accept_client(self):
-        """
-        循环接受客户端连接，并为每个连接创建一个新的线程来处理请求以支持并发请求
-        """
-        while not self.stop_event.is_set():
-            try:
-                client_sock, client_addr = self.sock.accept()
-            except socket.timeout as e:
-                if not self.stop_event.is_set():
-                    self.logger.error(f"accept client {e}")
-                continue
-            except socket.error as e:
-                if not self.stop_event.is_set():
-                    self.logger.error(f"Error accepting connection: {e}")
-                continue
-            if not self.stop_event.is_set():
-                self.logger.info(f'与客户端{str(client_addr)}建立了连接')
-            t = threading.Thread(target=self.rpc_client_handler, args=(client_sock, client_addr))
-            t.start()
-        self.sock.close()  # 然后关闭自身socket
+def loop_accept_client(self):
+    """
+    循环接受客户端连接，并为每个连接创建一个新的线程来处理请求以支持并发请求
+    """
+    while not 停止事件未被设置:
+				client_sock, client_addr = self.sock.accept()
+        # 开新线程处理此客户的请求，不影响server继续接受下一位客户
+        t = threading.Thread(target=self.rpc_client_handler, args=(client_sock, client_addr))
+        t.start()
+    self.sock.close()  # 最后关闭自身socket
 
 ```
 
-- **RPCServer**: 继承自**TCPServer**，并结合**Logger**、**ServerStub**和**RegistryClient**实现了完整的RPC服务功能：
+- **RPCServer**: 继承自**TCPServer**，并组合**Logger**、**ServerStub**和**RegistryClient**实现了完整的RPC服务功能：
+
+  	代码结构：
+
+  					<img src="/Users/acciomac/Library/Application Support/typora-user-images/截屏2024-06-20 上午9.16.45.png" alt="截屏2024-06-20 上午9.16.45" style="zoom: 33%;" />
+
+​	成员变量解释：除继承和组合的实现，此类设置了三个线程来管理服务的开启、运行与停止，详细由init函数注释解释：
 
 ```python
-class RPCServer(TCPServer):
-    def __init__(self, host, port):
-        self.logger = Logger()
-        self.stub = ServerStub(self.logger)  # 设置服务端代理，负责处理服务端方法的注册与调用请求
-        self.registry_client = RegistryClient(self.logger)  # 设置注册中心客户端，负责与注册中心通信，注册和保活服务
-        self.stop_event = threading.Event()  # 停止事件，用于控制RPCServer的停止
-        super().__init__(host, port, self.logger, self.stop_event) # 初始化父类TCPServer，传入要监听的ip与端口号
-        # 创建三个线程，分别用于处理停止信号、接受TCP连接和向注册中心注册与发送心跳。
-        self.loop_detect_stop_signal_thread = threading.Thread(target=self.loop_detect_stop_signal)
-        self.tcp_serve_thread = threading.Thread(target=self.loop_accept_client)
-        self.register_and_send_hb_thread = threading.Thread(target=self.registry_client.register_send_heartbeat,
-                                                            args=(self.host, self.port, self.stop_event))
+def __init__(self, host, port):
+    self.logger = Logger() # 运行日志创建
+    self.stub = ServerStub(self.logger)  # 设置服务端代理，负责处理服务端方法的注册与调用请求
+    self.registry_client = RegistryClient(self.logger)  # 设置注册中心客户端，负责与注册中心通信，注册和保活服务
+    self.stop_event = threading.Event()  # 停止事件，用于控制RPCServer的停止
+    super().__init__(host, port, self.logger, self.stop_event) # 初始化父类TCPServer，传入要监听的ip与端口号
+    # 创建三个线程，分别用于处理停止信号、接受TCP连接和向注册中心注册与发送心跳。
+    self.loop_detect_stop_signal_thread = threading.Thread(target=self.loop_detect_stop_signal)
+    self.tcp_serve_thread = threading.Thread(target=self.loop_accept_client)
+    self.register_and_send_hb_thread = threading.Thread(target=self.registry_client.register_send_heartbeat,
+                                                        args=(self.host, self.port, self.stop_event))
+```
 
-    def rpc_client_handler(self, client_sock, client_addr):
-        """
-        实现父类的处理每个客户端请求的handler
-        处理每个客户端的RPC请求，接收消息后调用注册的方法，并返回结果
-        :param client_sock: 客户端的Socket
-        :param client_addr: 客户端的地址
-        """
-        try:
-            while not self.stop_event.is_set():
-                msg = client_sock.recv(1024)
-                if not msg:
-                    raise EOFError()
-                response_data = self.stub.call_method(msg, client_addr)
-                client_sock.sendall(response_data)
-        except EOFError:
-            self.logger.info(f'info on handle: 客户端{str(client_addr)}关闭了连接')
-        except ConnectionResetError:
-            self.logger.error(f'except on handle: 客户端{str(client_addr)}异常地关闭了连接')
-        finally:
-            client_sock.close()
+​	rpc_client_handler：实现父类的处理每个客户端请求的handler，函数签名与实现思路：
 
-    def serve(self):
-        """
-        启动RPC服务器，开始监听并处理客户端连接，
-        启动检测停止信号、处理TCP连接和注册中心心跳的线程。
-        """
-        self.logger.info(f"From {self.host}:{self.port} start listening...")
-        self.loop_detect_stop_signal_thread.start()
-        self.tcp_serve_thread.start()
-        self.register_and_send_hb_thread.start()
-        try:
-            while True:
-                time.sleep(100)
-        except KeyboardInterrupt:
-            self.logger.info("Received KeyboardInterrupt, stopping...")
-            self.registry_client.unregister_from_registry(self.host, self.port)
-            self.stop_event.set()
-        finally:
-            self.logger.info("Waiting for other threads to join...")
-            self.register_and_send_hb_thread.join(3)
-            self.loop_detect_stop_signal_thread.join(3)
-            self.tcp_serve_thread.join(3)
-            self.logger.info("Server service stopped.")
-            exit(0)
+```python
+def rpc_client_handler(self, client_sock, client_addr):
+    """
+    实现父类的处理每个客户端请求的handler
+    在stop_event（）停止信号没有被设置时，循环接收客户端请求消息，
+    用stub的方法处理每个客户端的RPC请求，并返回调用结果，最终关闭客户端socket
+    :param client_sock: 客户端的Socket
+    :param client_addr: 客户端的地址
+    """
+```
+
+​	serve：是本项目rpcserver被创建后服务启动的函数，设计为主线程负责管理服务端与客户端通信，与注册中心通信和停止服务端这三个作业线程，监听外部中断来发送停止信号，并在所有线程停止后终止程序，函数签名与实现思路：
+
+```python
+def serve(self):
+    """
+    启动RPC服务器，开始监听并处理客户端连接，
+    启动检测停止信号、处理TCP连接和注册中心心跳的线程。
+    """
+    self.loop_detect_stop_signal_thread.start()...三个线程开启
+    try:
+        while True: # 主线程开启监听
+            time.sleep(100)
+    except KeyboardInterrupt: # 检测到外部中断，发送停止信号
+				...
+    finally: # 在所有线程停止后终止服务
+				...
+        exit(0)
 ```
 
 - 结构中剩余的10个函数为测试服务端功能时编写的注册的方法:
@@ -400,7 +350,7 @@ from datetime import datetime
 
 其中：
 
-- **LoadBalance**:  负载均衡类，以静态方法方式提供负载均衡算法，本项目暂时只实现了随机负载均衡算法 `random` ，后续可继续拓展：
+- **LoadBalance**:  负载均衡类，**实现负载均衡功能**，以静态方法方式提供负载均衡算法，本项目暂时只实现了随机负载均衡算法 `random` ，后续可继续拓展：
 
 ```python
 class LoadBalance:
@@ -412,6 +362,10 @@ class LoadBalance:
 
 - **Logger**: 用于输出与存储日志信息，默认不存储仅输出，分为info与error两个级别，与server.py一致。
 - **RegistryClient**: 负责与注册中心通信，能向注册中心请求**服务发现**获取可用的服务端列表并存至本地缓存的服务端列表：
+
+​	代码结构：
+
+​	
 
 ```python
 class RegistryClient:
