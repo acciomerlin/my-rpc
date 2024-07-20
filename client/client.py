@@ -11,16 +11,30 @@ from datetime import datetime
 import random
 
 
-# 示例负载均衡模块
+# 负载均衡模块
 class LoadBalance:
     @staticmethod
     def random(servers):
         return random.choice(servers)
 
     @staticmethod
-    def stake(servers):
-        return random.choice(servers)
+    def round_robin(servers):
+        if not hasattr(LoadBalance, "_round_robin_index"):  # 如果此类还没有这个属性，添加并置0表示开始轮询
+            LoadBalance._round_robin_index = 0
+        server = servers[LoadBalance._round_robin_index % len(servers)]  # 保证在server个数内循环
+        LoadBalance._round_robin_index += 1
+        return server
 
+    @staticmethod
+    def weighted_random(servers):
+        weights = list(range(1, len(servers) + 1))  # 这里默认权重是根据server数量1-len(servers),可根据自己需要调整
+        total_weight = sum(weights)
+        r = random.uniform(0, total_weight)  # 在0-权重和内生成一随机数
+        upto = 0
+        for server, weight in zip(servers, weights):
+            if upto + weight >= r:  # 如果此时权重和大于随机数，返回此server
+                return server
+            upto += weight
 
 
 class Logger:
@@ -148,6 +162,7 @@ class RPCClient:
         """
         访问不存在属性时被调用的方法，动态创建一个代理函数_func，用于处理该方法调用,从而实现RPC远程调用；
         """
+
         def _func(*args, **kwargs):
             """
             代理函数，用于调用Server端的方法；
@@ -171,7 +186,8 @@ class RPCClient:
                 result = json.loads(response.decode('utf-8'))["res"]
 
                 tcp_client.close()
-                self.logger.info(f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result} ｜ server: {self.host}:{self.port}")
+                self.logger.info(
+                    f"Call method: {method} args:{args} kwargs:{kwargs} | result: {result} ｜ server: {self.host}:{self.port}")
             except Exception as e:
                 self.logger.error(f"Error occurred when calling method {method}: {e}")
                 result = None
@@ -196,9 +212,12 @@ class RPCClient:
         if len(servers) == 0:
             raise Exception(f"No available servers")
 
-        server = LoadBalance.random(servers)
+        # 选用不同负载均衡算法的例子
+        # server = LoadBalance.round_robin(servers)  # 轮询
+        # server = LoadBalance.weighted_random(servers, weights) # 加权随机
+        server = LoadBalance.random(servers)  # 随机
         host, port = server
-        self.host, self.port = host, port # just for print log
+        self.host, self.port = host, port  # just for print log
 
         if '.' in host:
             addr_type = socket.AF_INET
