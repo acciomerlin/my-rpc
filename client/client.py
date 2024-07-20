@@ -17,6 +17,11 @@ class LoadBalance:
     def random(servers):
         return random.choice(servers)
 
+    @staticmethod
+    def stake(servers):
+        return random.choice(servers)
+
+
 
 class Logger:
     def __init__(self, save_log=False):
